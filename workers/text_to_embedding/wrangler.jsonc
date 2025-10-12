@@ -1,0 +1,16 @@
+{
+	"name": "smara-text-to-embedding",
+	"main": "index.ts",
+	"compatibility_date": "2025-10-01",
+	"ai": {
+		"binding": "AI",
+		"remote": true
+	},
+	"vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "smara-index",
+			"remote": true
+		}
+	]
+}
