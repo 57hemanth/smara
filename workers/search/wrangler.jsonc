@@ -1,0 +1,16 @@
+{
+    "name": "smara-search",
+    "main": "index.ts",
+    "compatibility_date": "2025-10-01",
+    "vectorize": [
+		{
+			"binding": "VECTORIZE",
+			"index_name": "smara-index",
+			"remote": true
+		}
+	],
+	"ai": {
+		"binding": "AI",
+		"remote": true
+	}
+}
