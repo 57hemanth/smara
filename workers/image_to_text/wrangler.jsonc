@@ -1,0 +1,14 @@
+{
+    "name": "smara-image-to-text",
+    "main": "index.ts",
+    "compatibility_date": "2025-10-01",
+    "ai": {
+      "binding": "AI"
+    },
+    "r2_buckets": [
+      {
+        "binding": "R2",
+        "bucket_name": "smara"
+      }
+    ]
+}
