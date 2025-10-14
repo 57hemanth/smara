@@ -67,17 +67,10 @@ class SearchController {
         searchData.data.matches.map(async (match) => {
           let preview: string | undefined;
 
-          // Generate URL for R2 object
-          if (match.metadata.r2_key) {
+          // Generate public URL for R2 object
+          if (match.metadata.r2_key && c.env.R2_PUBLIC_BASE_URL) {
             try {
-              // For public access, use public URL if configured
-              if (c.env.R2_PUBLIC_BASE_URL) {
-                preview = `${c.env.R2_PUBLIC_BASE_URL}/${match.metadata.r2_key}`;
-              } else {
-                // For now, just provide the R2 key - frontend can handle this
-                // TODO: Implement proper signed URLs when needed
-                preview = `r2://${match.metadata.r2_key}`;
-              }
+              preview = `${c.env.R2_PUBLIC_BASE_URL}/${match.metadata.r2_key}`;
             } catch (error) {
               console.error('Error generating R2 URL:', error);
               // Continue without preview URL
