@@ -32,7 +32,8 @@ export default{
                 topK: body.topK || 10,
                 filter: {
                     user_id: body.user_id
-                }
+                },
+                returnMetadata: true
             });
 
             return json({ data: vectorizeRes }, 200);
