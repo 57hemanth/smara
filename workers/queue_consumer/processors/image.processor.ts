@@ -24,7 +24,8 @@ export async function processImageMessage(message: IngestMessage, env: Env): Pro
       body: JSON.stringify({ 
         text: result.description, 
         user_id: message.user_id, 
-        asset_id: message.asset_id 
+        asset_id: message.asset_id,
+        r2_key: message.r2_key
       })
     })
 }

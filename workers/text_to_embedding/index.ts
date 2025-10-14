@@ -14,7 +14,7 @@ export default {
                 return json({ error: "Use POST" }, 405);
             }
 
-            const body = (await request.json()) as { text: string, user_id: string, asset_id: string };
+            const body = (await request.json()) as { text: string, user_id: string, asset_id: string, r2_key: string };
 
             if (!body.text) {
                 return json({ error: "Provide a text" }, 400);
@@ -36,6 +36,7 @@ export default {
                         user_id: body.user_id,
                         modality: "text",
                         date: new Date().toISOString(),
+                        r2_key: body.r2_key,
                     },
                 }
             ]);

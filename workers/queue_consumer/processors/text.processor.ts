@@ -19,7 +19,8 @@ export async function processTextMessage(message: IngestMessage, env: Env): Prom
       body: JSON.stringify({ 
         text: text, 
         user_id: message.user_id, 
-        asset_id: message.asset_id 
+        asset_id: message.asset_id,
+        r2_key: message.r2_key
       })
     })
 }
