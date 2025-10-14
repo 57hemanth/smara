@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Cloudflare Pages runtime configuration
+  output: "export",
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+  // Environment variables for Cloudflare Pages
+  env: {
+    CF_PAGES: process.env.CF_PAGES,
+  },
 };
 
 export default nextConfig;

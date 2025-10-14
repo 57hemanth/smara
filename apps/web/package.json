@@ -5,7 +5,12 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "deploy": "wrangler pages deploy out --project-name=smara-ui",
+    "deploy:preview": "wrangler pages deploy out --project-name=smara-ui --branch=preview",
+    "pages:dev": "wrangler pages dev out --port=3000 --compatibility-date=2024-10-14",
+    "cf:login": "wrangler login",
+    "cf:whoami": "wrangler whoami"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.908.0",
