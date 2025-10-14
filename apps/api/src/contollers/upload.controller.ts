@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import { sanitizePathSegment, extFromType } from "../utils/r2.utils";
+import { sanitizePathSegment, extFromType, modalityFromType } from "../utils/r2.utils";
 import { nanoid } from "nanoid";
 import type { Env, Variables } from "../types/env";
 
@@ -54,7 +54,12 @@ class UploadController {
       const publicUrl = c.env.R2_PUBLIC_BASE_URL 
         ? `${c.env.R2_PUBLIC_BASE_URL}/${key}` 
         : null;
-  
+
+      const modality = modalityFromType(contentType);
+
+      // Publish to queue
+      await c.env.INGEST_QUEUE.send({ r2_key: key, user_id: userId, mime: contentType, modality: modality, asset_id: id });
+      
       return c.json(
         { 
           success: true, 

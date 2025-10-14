@@ -2,6 +2,7 @@
 export interface Env {
   // R2 Storage
   R2: R2Bucket;
+  INGEST_QUEUE: Queue;
   
   // Environment Variables (from wrangler.jsonc vars)
   ALLOWED_ORIGINS?: string;
