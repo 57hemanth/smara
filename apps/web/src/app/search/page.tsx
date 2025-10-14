@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { apiClient } from "@/lib/api";
+import { MediaPreview } from "@/components";
 
 interface SearchResult {
   assetId: string;
@@ -119,31 +120,65 @@ export default function SearchPage() {
                     </code>
                   </div>
                   
-                  {result.metadata && Object.keys(result.metadata).length > 0 && (
+                  {result.metadata?.text && (
                     <div>
-                      <span className="font-medium">Metadata:</span>
-                      <div className="mt-1 text-xs">
-                        {Object.entries(result.metadata).map(([key, value]) => (
-                          <div key={key} className="ml-2">
-                            <span className="font-mono text-gray-600">{key}:</span> {String(value)}
-                          </div>
-                        ))}
+                      <span className="font-medium">Content:</span>
+                      <div className="mt-1 p-2 bg-white rounded border text-xs text-gray-700 max-h-24 overflow-y-auto">
+                        {result.metadata.text}
                       </div>
+                    </div>
+                  )}
+
+                  {result.metadata?.date && (
+                    <div>
+                      <span className="font-medium">Date:</span>{" "}
+                      <span className="text-xs text-gray-600">
+                        {new Date(result.metadata.date).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {result.metadata?.r2_key && (
+                    <div>
+                      <span className="font-medium">File:</span>{" "}
+                      <code className="text-xs bg-gray-200 px-1 py-0.5 rounded break-all">
+                        {result.metadata.r2_key}
+                      </code>
                     </div>
                   )}
                   
                   {result.preview && (
                     <div>
-                      <span className="font-medium">Preview:</span>{" "}
-                      <a 
-                        className="text-blue-600 hover:underline break-all" 
-                        href={result.preview} 
-                        target="_blank" 
-                        rel="noreferrer"
-                      >
-                        View file
-                      </a>
+                      <span className="font-medium">Preview:</span>
+                      <div className="mt-2 space-y-2">
+                        <MediaPreview url={result.preview} modality={result.modality} />
+                        <a 
+                          className="text-blue-600 hover:underline text-xs inline-block" 
+                          href={result.preview} 
+                          target="_blank" 
+                          rel="noreferrer"
+                        >
+                          Open in new tab
+                        </a>
+                      </div>
                     </div>
+                  )}
+
+                  {result.metadata && Object.keys(result.metadata).filter(key => !['text', 'date', 'r2_key'].includes(key)).length > 0 && (
+                    <details className="mt-2">
+                      <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-800">
+                        Additional metadata ({Object.keys(result.metadata).filter(key => !['text', 'date', 'r2_key'].includes(key)).length})
+                      </summary>
+                      <div className="mt-1 text-xs ml-4 space-y-1">
+                        {Object.entries(result.metadata)
+                          .filter(([key]) => !['text', 'date', 'r2_key'].includes(key))
+                          .map(([key, value]) => (
+                            <div key={key}>
+                              <span className="font-mono text-gray-600">{key}:</span> {String(value)}
+                            </div>
+                          ))}
+                      </div>
+                    </details>
                   )}
                 </div>
               </div>
