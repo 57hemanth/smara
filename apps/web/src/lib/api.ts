@@ -63,6 +63,48 @@ export class ApiClient {
   }
 
   /**
+   * Search files using vector embeddings
+   */
+  async search(query: string, options?: {
+    modality?: string;
+    limit?: number;
+  }): Promise<Array<{
+    assetId: string;
+    userId: string;
+    modality: string;
+    score: number;
+    metadata: Record<string, any>;
+    preview?: string;
+  }>> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add user ID if available (will be replaced by auth token later)
+    if (this.userId) {
+      headers['X-User-Id'] = this.userId;
+    }
+
+    const body = {
+      query,
+      ...options,
+    };
+
+    const response = await fetch(`${this.baseUrl}/search`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Search failed' }));
+      throw new Error(error.error || `Search failed: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  /**
    * Health check
    */
   async healthCheck(): Promise<{ status: string; service: string; version: string }> {
