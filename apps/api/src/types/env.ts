@@ -4,6 +4,9 @@ export interface Env {
   R2: R2Bucket;
   INGEST_QUEUE: Queue;
   
+  // Service Bindings
+  SEARCH_WORKER: Fetcher;
+  
   // Environment Variables (from wrangler.jsonc vars)
   ALLOWED_ORIGINS?: string;
   R2_PUBLIC_BASE_URL?: string;

@@ -6,6 +6,7 @@ import type { Env, Variables } from './types/env';
 
 // Routes
 import uploadRoutes from './routes/upload.route';
+import searchRoutes from './routes/search.route';
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -36,6 +37,7 @@ app.get('/', (c) => {
 
 // API Routes
 app.route('/upload', uploadRoutes);
+app.route('/search', searchRoutes);
 
 // 404 Handler
 app.notFound((c) => {
