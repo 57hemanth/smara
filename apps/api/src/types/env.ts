@@ -4,6 +4,7 @@ export interface Env {
   R2: R2Bucket;
   
   // Environment Variables (from wrangler.jsonc vars)
+  ALLOWED_ORIGINS?: string;
   R2_PUBLIC_BASE_URL?: string;
 }
 

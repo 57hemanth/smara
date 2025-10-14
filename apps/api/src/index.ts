@@ -14,12 +14,15 @@ app.use('*', logger());
 app.use('*', prettyJSON());
 
 // CORS - Allow web app and browser extension
-app.use('*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
-  credentials: true,
-}));
+app.use('*', (c, next) => {
+  const allowedOrigins = c.env.ALLOWED_ORIGINS?.split(',') || ['*'];
+  return cors({
+    origin: allowedOrigins,
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
+    credentials: true,
+  })(c, next);
+});
 
 // Health check
 app.get('/', (c) => {
