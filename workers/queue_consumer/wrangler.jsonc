@@ -1,0 +1,46 @@
+{
+  "name": "smara-queue-consumer",
+  "main": "index.ts",
+  "compatibility_date": "2025-10-01",
+  "ai": {
+    "binding": "AI"
+  },
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "smara"
+    }
+  ],
+  "vectorize": [
+    {
+      "binding": "VECTOR",
+      "index_name": "smara-index"
+    }
+  ],
+  "queues": {
+    "consumers": [
+      {
+        "queue": "smara-ingest-queue",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30
+      }
+    ]
+  },
+  "services": [
+    {
+      "binding": "IMAGE_TO_TEXT_SERVICE",
+      "service": "smara-image-to-text",
+      "remote": true
+    },
+    {
+      "binding": "AUDIO_TO_TEXT_SERVICE", 
+      "service": "smara-audio-to-text",
+      "remote": true
+    },
+    {
+      "binding": "TEXT_TO_EMBEDDING_SERVICE",
+      "service": "smara-text-to-embedding",
+      "remote": true
+    }
+  ]
+}

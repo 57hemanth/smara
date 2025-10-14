@@ -98,6 +98,12 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  workers/queue_consumer:
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20251011.0
+        version: 4.20251011.0
+
   workers/search:
     devDependencies:
       '@cloudflare/workers-types':
