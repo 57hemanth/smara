@@ -28,7 +28,8 @@ export async function processAudioMessage(message: IngestMessage, env: Env): Pro
           text: transcription, 
           user_id: message.user_id, 
           asset_id: message.asset_id,
-          r2_key: message.r2_key
+          r2_key: message.r2_key,
+          modality: message.modality
         })
       })
     }

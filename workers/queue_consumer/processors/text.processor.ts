@@ -20,7 +20,8 @@ export async function processTextMessage(message: IngestMessage, env: Env): Prom
         text: text, 
         user_id: message.user_id, 
         asset_id: message.asset_id,
-        r2_key: message.r2_key
+        r2_key: message.r2_key,
+        modality: message.modality
       })
     })
 }
