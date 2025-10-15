@@ -12,5 +12,12 @@
 			"index_name": "smara-index",
 			"remote": true
 		}
-	]
+	],
+	"queues": {
+		"consumers" : [{
+			"queue": "smara-embedding-queue",
+			"max_batch_size": 1,
+			"max_batch_timeout": 0
+		}]
+	}
 }

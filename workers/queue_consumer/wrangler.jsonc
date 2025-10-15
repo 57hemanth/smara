@@ -24,7 +24,11 @@
         "max_batch_size": 1,
         "max_batch_timeout": 0
       }
-    ]
+    ],
+    "producers": [{
+      "binding": "EMBEDDING_QUEUE",
+      "queue": "smara-embedding-queue"
+    }]
   },
   "services": [
     {
@@ -35,11 +39,6 @@
     {
       "binding": "AUDIO_TO_TEXT_SERVICE", 
       "service": "smara-audio-to-text",
-      "remote": true
-    },
-    {
-      "binding": "TEXT_TO_EMBEDDING_SERVICE",
-      "service": "smara-text-to-embedding",
       "remote": true
     }
   ]

@@ -13,15 +13,11 @@ export async function processTextMessage(message: IngestMessage, env: Env): Prom
     console.log(`Text file loaded: ${message.asset_id}, length: ${text.length}`)
     
     // Generate embeddings
-    await env.TEXT_TO_EMBEDDING_SERVICE.fetch('http://localhost/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        text: text, 
-        user_id: message.user_id, 
-        asset_id: message.asset_id,
-        r2_key: message.r2_key,
-        modality: message.modality
-      })
-    })
+    await env.EMBEDDING_QUEUE.send({
+      text: text,
+      user_id: message.user_id,
+      asset_id: message.asset_id,
+      r2_key: message.r2_key,
+      modality: message.modality
+    });
 }

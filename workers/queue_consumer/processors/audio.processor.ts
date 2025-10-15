@@ -21,16 +21,12 @@ export async function processAudioMessage(message: IngestMessage, env: Env): Pro
     const transcription = result.description || result.raw_response?.text || ''
     if (transcription) {      
       // Generate embeddings for searchability
-      await env.TEXT_TO_EMBEDDING_SERVICE.fetch('http://localhost/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          text: transcription, 
-          user_id: message.user_id, 
-          asset_id: message.asset_id,
-          r2_key: message.r2_key,
-          modality: message.modality
-        })
-      })
+      await env.EMBEDDING_QUEUE.send({
+        text: transcription,
+        user_id: message.user_id,
+        asset_id: message.asset_id,
+        r2_key: message.r2_key,
+        modality: message.modality
+      });
     }
 }

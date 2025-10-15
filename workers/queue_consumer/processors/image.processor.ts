@@ -18,15 +18,11 @@ export async function processImageMessage(message: IngestMessage, env: Env): Pro
     console.log(`Image processed successfully: ${message.asset_id}`, result)
     
     // Generate text embeddings for the description
-    await env.TEXT_TO_EMBEDDING_SERVICE.fetch('http://localhost/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        text: result.description, 
-        user_id: message.user_id, 
-        asset_id: message.asset_id,
-        r2_key: message.r2_key,
-        modality: message.modality
-      })
-    })
+    await env.EMBEDDING_QUEUE.send({
+      text: result.description,
+      user_id: message.user_id,
+      asset_id: message.asset_id,
+      r2_key: message.r2_key,
+      modality: message.modality
+    });
 }
