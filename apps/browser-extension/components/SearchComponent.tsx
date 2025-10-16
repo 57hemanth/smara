@@ -49,7 +49,7 @@ export function SearchComponent({ userId }: SearchComponentProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-gray-900">Search Files</h3>
+      <h3 className="text-sm font-semibold text-gray-900">Search</h3>
       
       <div className="space-y-2">
         <input
