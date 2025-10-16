@@ -16,9 +16,24 @@ app.use('*', prettyJSON());
 
 // CORS - Allow web app and browser extension
 app.use('*', (c, next) => {
-  const allowedOrigins = c.env.ALLOWED_ORIGINS?.split(',') || ['*'];
+  const allowedOrigins = c.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
+  
   return cors({
-    origin: allowedOrigins,
+    origin: (origin) => {
+      // Allow requests with no origin (like from Postman)
+      if (!origin) return origin;
+      
+      // Allow any chrome extension
+      if (origin.startsWith('chrome-extension://')) return origin;
+      
+      // Allow specific configured origins
+      if (allowedOrigins.includes(origin)) return origin;
+      
+      // Allow localhost for development
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) return origin;
+      
+      return null;
+    },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
     credentials: true,
