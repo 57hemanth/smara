@@ -1,0 +1,5 @@
+{
+    "name": "smara-video-to-text",
+    "main": "index.ts",
+    "compatibility_date": "2025-10-01"
+}
