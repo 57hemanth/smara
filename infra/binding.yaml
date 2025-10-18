@@ -52,6 +52,12 @@ queues:
       - worker: smara-video-to-text
         role: Extract frames and audio, route to image/audio queues
   
+  - name: smara-link-ingest
+    description: Link/URL processing queue (YouTube transcripts)
+    consumers:
+      - worker: smara-link-to-text
+        role: Extract YouTube transcripts and convert to embeddings
+  
   # Final embedding generation queue
   - name: smara-embedding-queue
     description: Text to vector embedding queue
@@ -62,17 +68,21 @@ queues:
 # Queue Flow
 # Content Source → Backend API → smara-ingest-queue → queue_consumer (router)
 #                                                           ↓
-#                                    ┌──────────────────────┼──────────────────────┐
-#                                    ↓                      ↓                      ↓
-#                          smara-image-ingest    smara-audio-ingest    smara-video-ingest
-#                                    ↓                      ↓                      ↓
-#                              image_to_text          audio_to_text         video_to_text
-#                                    ↓                      ↓                      ↓
-#                                    └──────────────────────┼──────────(frames/audio)
-#                                                           ↓                      ↓
-#                                                           └──────────────────────┘
+#                          ┌────────────────────────────────┼────────────────────────────────┐
+#                          ↓                                ↓                                ↓
+#                  smara-image-ingest            smara-audio-ingest              smara-video-ingest
+#                          ↓                                ↓                                ↓
+#                    image_to_text                    audio_to_text                   video_to_text
+#                          ↓                                ↓                                ↓
+#                          └────────────────────────────────┼────────────────────────────────┘
 #                                                           ↓
-#                                    └──────────────────────┼──────────────────────┘
+#                          ┌────────────────────────────────┼────────────────────────────────┐
+#                          ↓                                                                 ↓
+#                  smara-link-ingest                                             (frames/audio from video)
+#                          ↓                                                                 ↓
+#                    link_to_text                                                            │
+#                          ↓                                                                 │
+#                          └─────────────────────────────────────────────────────────────────┘
 #                                                           ↓
 #                                              smara-embedding-queue
 #                                                           ↓

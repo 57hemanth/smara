@@ -1,0 +1,23 @@
+{
+  "name": "@smara/link-to-text",
+  "version": "1.0.0",
+  "description": "SMARA worker for extracting transcripts from YouTube URLs",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["smara", "youtube", "transcription", "cloudflare-workers"],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.17.1",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251011.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@smara/shared": "workspace:*",
+    "youtube-transcript": "^1.2.1"
+  }
+}

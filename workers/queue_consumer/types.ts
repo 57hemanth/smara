@@ -5,8 +5,9 @@ export interface IngestMessage {
   user_id: string
   r2_key: string
   mime: string
-  modality: 'image' | 'audio' | 'video' | 'text'
+  modality: 'image' | 'audio' | 'video' | 'text' | 'link'
   bytes?: number
+  url?: string  // For link modality - the YouTube or external URL
 }
 
 export interface Env {
@@ -17,5 +18,6 @@ export interface Env {
   IMAGE_INGEST_QUEUE: Queue
   AUDIO_INGEST_QUEUE: Queue
   VIDEO_INGEST_QUEUE: Queue
+  LINK_INGEST_QUEUE: Queue
   EMBEDDING_QUEUE: Queue
 }

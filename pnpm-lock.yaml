@@ -179,6 +179,22 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  workers/link_to_text:
+    dependencies:
+      '@smara/shared':
+        specifier: workspace:*
+        version: link:../shared
+      youtube-transcript:
+        specifier: ^1.2.1
+        version: 1.2.1
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20251011.0
+        version: 4.20251011.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   workers/queue_consumer:
     dependencies:
       '@smara/shared':
@@ -4904,6 +4920,10 @@ packages:
 
   youch@4.1.0-beta.10:
     resolution: {integrity: sha512-rLfVLB4FgQneDr0dv1oddCVZmKjcJ6yX6mS4pU82Mq/Dt9a3cLZQ62pDBL4AUO+uVrCvtWz3ZFUL2HFAFJ/BXQ==}
+
+  youtube-transcript@1.2.1:
+    resolution: {integrity: sha512-TvEGkBaajKw+B6y91ziLuBLsa5cawgowou+Bk0ciGpjELDfAzSzTGXaZmeSSkUeknCPpEr/WGApOHDwV7V+Y9Q==}
+    engines: {node: '>=18.0.0'}
 
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
@@ -10145,5 +10165,7 @@ snapshots:
       '@speed-highlight/core': 1.2.7
       cookie: 1.0.2
       youch-core: 0.3.3
+
+  youtube-transcript@1.2.1: {}
 
   zod@3.22.3: {}
