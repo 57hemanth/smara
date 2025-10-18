@@ -82,17 +82,15 @@ function IndexPopup() {
           {activeTab === 'upload' && (
             <UploadComponent 
               userId={userId || 'demo-user'}
-              onUpload={(file, options) => apiClient.uploadFile(file, options)}
-              onUploadUrl={(url) => apiClient.uploadUrl(url)}
-              onUploadComplete={handleUploadComplete}
-              showUrlUpload={true}
               currentUrl={currentUrl}
+              onUpload={(file) => apiClient.uploadFile(file)}
+              onUploadUrl={(url) => apiClient.uploadUrl(url)}
             />
           )}
           {activeTab === 'search' && (
             <SearchComponent 
               userId={userId || 'demo-user'}
-              onSearch={(query, options) => apiClient.search(query, options)}
+              onSearch={(query) => apiClient.search(query)}
             />
           )}
         </div>

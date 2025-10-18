@@ -1,5 +1,5 @@
 /**
- * Re-export shared components from @smara/ui
- * React deduplication handled by pnpm overrides in root package.json
+ * Local extension components (to avoid React bundling issues with Plasmo)
  */
-export { UploadComponent, SearchComponent, MediaPreview } from '@smara/ui';
+export { UploadComponent } from './UploadComponent';
+export { SearchComponent } from './SearchComponent';
