@@ -34,5 +34,13 @@
         { "binding": "IMAGE_QUEUE", "queue": "smara-image-ingest" },
         { "binding": "AUDIO_QUEUE", "queue": "smara-audio-ingest" }
       ]
+    },
+
+    "observability": {
+        "logs": {
+            "enabled": true,
+            "head_sampling_rate": 1,
+            "invocation_logs": true
+        }
     }
 }
