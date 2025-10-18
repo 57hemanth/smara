@@ -104,6 +104,34 @@ export class SmaraApiClient {
   }
 
   /**
+   * Upload URL (YouTube link) to backend API
+   * The API will create metadata and queue for transcript processing
+   */
+  async uploadUrl(url: string): Promise<UploadResult> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add user ID if available
+    if (this.userId) {
+      headers['X-User-Id'] = this.userId;
+    }
+
+    const response = await fetch(`${this.baseUrl}/upload/url`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ url }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'URL upload failed' }));
+      throw new Error(error.error || `URL upload failed: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  /**
    * Search files using vector embeddings
    */
   async search(query: string, options?: SearchOptions): Promise<SearchResult[]> {

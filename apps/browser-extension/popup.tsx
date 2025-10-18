@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useStorage } from "@plasmohq/storage/hook"
 import { UploadComponent, SearchComponent } from "./components"
 import { apiClient } from "./lib/api"
@@ -8,6 +8,16 @@ type ActiveTab = 'upload' | 'search'
 function IndexPopup() {
   const [userId, setUserId] = useStorage("smara-user-id", "demo-user")
   const [activeTab, setActiveTab] = useState<ActiveTab>('upload')
+  const [currentUrl, setCurrentUrl] = useState<string>("")
+
+  // Get current tab URL on mount
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.url) {
+        setCurrentUrl(tabs[0].url);
+      }
+    });
+  }, []);
 
   // Set user ID on API client
   if (userId) {
@@ -73,7 +83,10 @@ function IndexPopup() {
             <UploadComponent 
               userId={userId || 'demo-user'}
               onUpload={(file, options) => apiClient.uploadFile(file, options)}
+              onUploadUrl={(url) => apiClient.uploadUrl(url)}
               onUploadComplete={handleUploadComplete}
+              showUrlUpload={true}
+              currentUrl={currentUrl}
             />
           )}
           {activeTab === 'search' && (

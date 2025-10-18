@@ -108,13 +108,14 @@ export function SearchComponent({ userId, onSearch }: SearchComponentProps) {
                 </div>
               )}
 
-              {result.preview && (
+              {(result.preview || (result.modality === 'link' && result.metadata?.url)) && (
                 <div className="space-y-1">
                   <div className="text-xs text-gray-600">Preview:</div>
                   <MediaPreview 
-                    url={result.preview} 
+                    url={result.preview || result.metadata?.url} 
                     modality={result.modality}
-                    maxHeight="80px"
+                    maxHeight="120px"
+                    metadata={result.metadata}
                   />
                 </div>
               )}

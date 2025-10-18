@@ -13,6 +13,7 @@ interface EmbeddingMessage {
     source_r2_key?: string;  // Original asset r2_key for search results
     modality: string;
     chunk_id?: string;
+    url?: string;  // YouTube URL for link modality
 }
 
 const MODEL = "@cf/google/embeddinggemma-300m"
@@ -76,6 +77,7 @@ export default {
                             date: new Date().toISOString(),
                             r2_key: body.r2_key,
                             chunk_id: body.chunk_id,
+                            url: body.url,  // Store YouTube URL for link modality
                         },
                     }
                 ]);

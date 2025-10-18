@@ -3,11 +3,40 @@ interface MediaPreviewProps {
   modality: string;
   maxHeight?: string;
   className?: string;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Extract YouTube video ID from URL
+ */
+function getYoutubeVideoId(url: string): string | null {
+  try {
+    const urlObj = new URL(url);
+    
+    if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1).split('?')[0];
+    }
+    
+    if (urlObj.hostname.includes('youtube.com')) {
+      const vParam = urlObj.searchParams.get('v');
+      if (vParam) return vParam;
+      
+      const embedMatch = urlObj.pathname.match(/\/embed\/([^/?]+)/);
+      if (embedMatch) return embedMatch[1];
+      
+      const vMatch = urlObj.pathname.match(/\/v\/([^/?]+)/);
+      if (vMatch) return vMatch[1];
+    }
+    
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 /**
  * MediaPreview component for rendering different types of media files
- * Supports images, videos, audio, and fallback for other file types
+ * Supports images, videos, audio, YouTube links, and fallback for other file types
  * 
  * Shared across web app and browser extension
  */
@@ -15,7 +44,8 @@ export function MediaPreview({
   url, 
   modality, 
   maxHeight = '200px', 
-  className = '' 
+  className = '',
+  metadata
 }: MediaPreviewProps) {
   if (modality === "image") {
     return (
@@ -82,6 +112,58 @@ export function MediaPreview({
         </audio>
       </div>
     );
+  }
+
+  // For YouTube links, show embedded player
+  if (modality === "link") {
+    const videoId = getYoutubeVideoId(url);
+    
+    if (videoId) {
+      return (
+        <div className={`w-full ${className}`}>
+          <div style={{ 
+            position: 'relative', 
+            paddingBottom: '56.25%', // 16:9 aspect ratio
+            height: 0,
+            overflow: 'hidden',
+            maxHeight,
+            borderRadius: '4px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video preview"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%'
+              }}
+            />
+          </div>
+          <a 
+            href={url} 
+            target="_blank" 
+            rel="noreferrer"
+            style={{
+              color: '#2563eb',
+              textDecoration: 'none',
+              fontSize: '11px',
+              marginTop: '4px',
+              display: 'inline-block'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            Open in YouTube ↗
+          </a>
+        </div>
+      );
+    }
   }
 
   // For text or other modalities, show as link with icon

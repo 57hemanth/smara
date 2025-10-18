@@ -3,6 +3,43 @@ import { sanitizePathSegment, extFromType, modalityFromType } from "../utils/r2.
 import { nanoid } from "nanoid";
 import type { Env, Variables } from "../types/env";
 
+/**
+ * YouTube URL validation utilities
+ */
+function isYoutubeUrl(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be';
+  } catch {
+    return false;
+  }
+}
+
+function getYoutubeVideoId(url: string): string | null {
+  try {
+    const urlObj = new URL(url);
+    
+    if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1).split('?')[0];
+    }
+    
+    if (urlObj.hostname.includes('youtube.com')) {
+      const vParam = urlObj.searchParams.get('v');
+      if (vParam) return vParam;
+      
+      const embedMatch = urlObj.pathname.match(/\/embed\/([^/?]+)/);
+      if (embedMatch) return embedMatch[1];
+      
+      const vMatch = urlObj.pathname.match(/\/v\/([^/?]+)/);
+      if (vMatch) return vMatch[1];
+    }
+    
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 class UploadController {
   static async upload(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
@@ -74,6 +111,82 @@ class UploadController {
     } catch (err: any) {
       console.error('Upload error:', err);
       return c.json({ error: err?.message || 'Upload failed' }, 500);
+    }
+  }
+
+  static async uploadUrl(c: Context<{ Bindings: Env; Variables: Variables }>) {
+    try {
+      const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
+      
+      // Parse request body
+      const body = await c.req.json();
+      const { url } = body;
+
+      if (!url || typeof url !== 'string') {
+        return c.json({ error: 'URL is required' }, 400);
+      }
+
+      // Validate YouTube URL
+      if (!isYoutubeUrl(url)) {
+        return c.json({ error: 'Only YouTube URLs are supported' }, 400);
+      }
+
+      const videoId = getYoutubeVideoId(url);
+      if (!videoId) {
+        return c.json({ error: 'Invalid YouTube URL format' }, 400);
+      }
+
+      // Build metadata
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const id = nanoid();
+      const key = `links/${userId}/${yyyy}-${mm}/${id}.json`;
+
+      // Create minimal metadata object
+      const metadata = {
+        url,
+        type: 'youtube',
+        video_id: videoId,
+        captured_at: now.toISOString()
+      };
+
+      // Store metadata in R2
+      await c.env.R2.put(key, JSON.stringify(metadata), {
+        httpMetadata: { 
+          contentType: 'application/json' 
+        },
+        customMetadata: {
+          userId,
+          uploadedAt: now.toISOString(),
+          videoId
+        }
+      });
+
+      // Publish to queue with link modality
+      await c.env.INGEST_QUEUE.send({ 
+        r2_key: key, 
+        user_id: userId, 
+        mime: 'application/json', 
+        modality: 'link',
+        asset_id: id,
+        url: url  // Pass URL to the queue message
+      });
+
+      return c.json(
+        {
+          success: true,
+          key,
+          assetId: id,
+          size: JSON.stringify(metadata).length,
+          contentType: 'application/json',
+          publicUrl: url  // Return original YouTube URL as "public URL"
+        },
+        200
+      );
+    } catch (err: any) {
+      console.error('URL upload error:', err);
+      return c.json({ error: err?.message || 'URL upload failed' }, 500);
     }
   }
 }
