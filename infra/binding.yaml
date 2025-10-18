@@ -46,6 +46,12 @@ queues:
       - worker: smara-audio-to-text
         role: Transcribe audio using Whisper ASR
   
+  - name: smara-video-ingest
+    description: Video processing queue
+    consumers:
+      - worker: smara-video-to-text
+        role: Extract frames and audio, route to image/audio queues
+  
   # Final embedding generation queue
   - name: smara-embedding-queue
     description: Text to vector embedding queue
@@ -58,10 +64,14 @@ queues:
 #                                                           ↓
 #                                    ┌──────────────────────┼──────────────────────┐
 #                                    ↓                      ↓                      ↓
-#                          smara-image-ingest    smara-audio-ingest      (text direct)
+#                          smara-image-ingest    smara-audio-ingest    smara-video-ingest
 #                                    ↓                      ↓                      ↓
-#                              image_to_text          audio_to_text               |
+#                              image_to_text          audio_to_text         video_to_text
 #                                    ↓                      ↓                      ↓
+#                                    └──────────────────────┼──────────(frames/audio)
+#                                                           ↓                      ↓
+#                                                           └──────────────────────┘
+#                                                           ↓
 #                                    └──────────────────────┼──────────────────────┘
 #                                                           ↓
 #                                              smara-embedding-queue

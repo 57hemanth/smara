@@ -1,11 +1,24 @@
 # Dockerfile
 FROM node:20-alpine
+
+# Install ffmpeg
 RUN apk add --no-cache ffmpeg
+
 WORKDIR /app
+
+# Copy package files and install dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
-COPY . .
+RUN npm install
+
+# Copy application files
+COPY index.ts ./
+
+# Set environment
 ENV NODE_ENV=production
-# Cloudflare Container will route to this port (match Worker Container.defaultPort)
 ENV PORT=8080
-CMD ["node", "index.ts"]
+
+# Create work directory for temp files
+RUN mkdir -p /app/work
+
+# Run the application with tsx (now installed as dependency)
+CMD ["npx", "tsx", "index.ts"]

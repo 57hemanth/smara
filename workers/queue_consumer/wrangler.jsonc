@@ -27,6 +27,10 @@
         "queue": "smara-audio-ingest"
       },
       {
+        "binding": "VIDEO_INGEST_QUEUE",
+        "queue": "smara-video-ingest"
+      },
+      {
         "binding": "EMBEDDING_QUEUE",
         "queue": "smara-embedding-queue"
       }

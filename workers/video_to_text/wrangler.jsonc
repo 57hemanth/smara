@@ -1,5 +1,38 @@
 {
     "name": "smara-video-to-text",
-    "main": "index.ts",
-    "compatibility_date": "2025-10-01"
+    "main": "worker.ts",
+    "compatibility_date": "2025-10-17",
+  
+    // Bind the container via a Durable Object
+    // Note: CPU/memory allocation is managed by Cloudflare automatically
+    "containers": [
+      { 
+        "class_name": "VideoContainer", 
+        "image": "./Dockerfile", 
+        "max_instances": 100
+      }
+    ],
+    "durable_objects": {
+      "bindings": [{ "name": "VIDEO_CONTAINER", "class_name": "VideoContainer" }]
+    },
+    "migrations": [
+      { "tag": "v1", "new_sqlite_classes": ["VideoContainer"] }
+    ],
+  
+    // R2 for storing extracted frames and audio
+    "r2_buckets": [
+      {
+        "binding": "R2",
+        "bucket_name": "smara"
+      }
+    ],
+  
+    // Queue consumer/producer bindings
+    "queues": {
+      "consumers": [{ "queue": "smara-video-ingest", "max_batch_size": 1 }],
+      "producers": [
+        { "binding": "IMAGE_QUEUE", "queue": "smara-image-ingest" },
+        { "binding": "AUDIO_QUEUE", "queue": "smara-audio-ingest" }
+      ]
+    }
 }

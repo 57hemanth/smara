@@ -1,7 +1,7 @@
 import type { Env, IngestMessage } from './types'
 import { json } from '../shared/utils'
 import { MessageBatch } from '@cloudflare/workers-types'
-import { processImageMessage, processAudioMessage, processTextMessage } from './processors'
+import { processImageMessage, processAudioMessage, processTextMessage, processVideoMessage } from './processors'
 
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -33,6 +33,9 @@ const worker = {
             break
           case 'audio':
             await processAudioMessage(ingestMsg, env)
+            break
+          case 'video':
+            await processVideoMessage(ingestMsg, env)
             break
           case 'text':
             await processTextMessage(ingestMsg, env)

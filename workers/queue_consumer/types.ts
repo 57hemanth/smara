@@ -16,5 +16,6 @@ export interface Env {
   // Queue Producers - route to specialized processing queues
   IMAGE_INGEST_QUEUE: Queue
   AUDIO_INGEST_QUEUE: Queue
+  VIDEO_INGEST_QUEUE: Queue
   EMBEDDING_QUEUE: Queue
 }
