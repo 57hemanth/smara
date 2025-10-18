@@ -10,6 +10,7 @@ interface EmbeddingMessage {
     user_id: string;
     asset_id: string;
     r2_key: string;
+    source_r2_key?: string;  // Original asset r2_key for search results
     modality: string;
     chunk_id?: string;
 }

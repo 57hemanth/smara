@@ -100,12 +100,13 @@ export default {
           console.log(`Uploaded frame ${index + 1}/${result.frames.length}: ${frameR2Key}`);
 
           // Send to image processing queue
-          // IMPORTANT: Keep original video's asset_id so search results show the video
+          // IMPORTANT: Keep original video's asset_id and r2_key so search results show the video
           await env.IMAGE_QUEUE.send({
             asset_id,  // Original video asset_id
             user_id,
-            r2_key: frameR2Key,
-            modality: 'image',
+            r2_key: frameR2Key,  // Frame location (for processing)
+            source_r2_key: r2_key,  // Original video location (for display)
+            modality: 'video',  // Set as video so frontend knows to display video player
             mime: 'image/jpeg',
             frame_index: index,
             is_video_frame: true  // Mark this as extracted from video
@@ -129,12 +130,13 @@ export default {
           console.log(`Uploaded audio: ${audioR2Key}`);
 
           // Send to audio processing queue
-          // IMPORTANT: Keep original video's asset_id so search results show the video
+          // IMPORTANT: Keep original video's asset_id and r2_key so search results show the video
           await env.AUDIO_QUEUE.send({
             asset_id,  // Original video asset_id
             user_id,
-            r2_key: audioR2Key,
-            modality: 'audio',
+            r2_key: audioR2Key,  // Audio location (for processing)
+            source_r2_key: r2_key,  // Original video location (for display)
+            modality: 'video',  // Set as video so frontend knows to display video player
             mime: 'audio/wav',
             is_video_audio: true  // Mark this as extracted from video
           });
