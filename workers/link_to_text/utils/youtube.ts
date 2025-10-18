@@ -1,22 +1,17 @@
-import { YoutubeTranscript } from 'youtube-transcript';
-
 /**
- * Fetch YouTube video transcript/captions
- * @param videoId YouTube video ID
- * @returns Concatenated transcript text
+ * YouTube URL validation and video ID extraction utilities
  */
-export async function getYoutubeCaption(videoId: string): Promise<string> {
-  const transcript = await YoutubeTranscript.fetchTranscript(videoId);
-  return transcript.map(item => item.text).join(' ');
-}
 
 /**
  * Check if a URL is a YouTube URL
- * @param url URL to check
- * @returns true if YouTube URL
  */
 export function isYoutubeUrl(url: string): boolean {
-  return url.includes('youtube.com') || url.includes('youtu.be');
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be';
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -25,8 +20,6 @@ export function isYoutubeUrl(url: string): boolean {
  * - https://www.youtube.com/watch?v=VIDEO_ID
  * - https://youtu.be/VIDEO_ID
  * - https://www.youtube.com/embed/VIDEO_ID
- * @param url YouTube URL
- * @returns Video ID or null if not found
  */
 export function getYoutubeVideoId(url: string): string | null {
   try {
@@ -37,7 +30,7 @@ export function getYoutubeVideoId(url: string): string | null {
       return urlObj.pathname.slice(1).split('?')[0];
     }
     
-    // Handle youtube.com/watch?v=VIDEO_ID
+    // Handle youtube.com/watch?v= format
     if (urlObj.hostname.includes('youtube.com')) {
       // Check for /watch?v= format
       const vParam = urlObj.searchParams.get('v');

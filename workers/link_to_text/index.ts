@@ -1,5 +1,6 @@
 import { json } from "@smara/shared/utils";
-import { getYoutubeCaption, isYoutubeUrl, getYoutubeVideoId } from "./utils/youtube";
+import { fetchTranscript } from 'youtube-transcript-plus';
+import { isYoutubeUrl, getYoutubeVideoId } from "./utils/youtube";
 
 export interface Env {
     R2: R2Bucket;
@@ -67,8 +68,9 @@ export default {
 
                 console.log(`Extracted video ID: ${videoId} from ${body.url}`);
 
-                // Fetch YouTube transcript
-                const transcript = await getYoutubeCaption(videoId);
+                // Fetch YouTube transcript using youtube-transcript-plus
+                const transcriptData = await fetchTranscript(videoId);
+                const transcript = transcriptData.map(item => item.text).join(' ');
                 
                 if (!transcript || transcript.trim().length === 0) {
                     console.error(`Message ${message.id}: No transcript available for video: ${videoId}`);

@@ -2,6 +2,7 @@
     "name": "smara-link-to-text",
     "main": "index.ts",
     "compatibility_date": "2025-10-01",
+    "compatibility_flags": ["nodejs_compat"],
     "r2_buckets": [
         {
             "binding": "R2",
