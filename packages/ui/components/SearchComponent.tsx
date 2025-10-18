@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { apiClient } from "../lib/api";
 import { MediaPreview } from "./MediaPreview";
 
 interface SearchResult {
@@ -13,9 +12,16 @@ interface SearchResult {
 
 interface SearchComponentProps {
   userId: string;
+  onSearch: (query: string, options?: { modality?: string; limit?: number }) => Promise<SearchResult[]>;
 }
 
-export function SearchComponent({ userId }: SearchComponentProps) {
+/**
+ * SearchComponent for querying uploaded files
+ * 
+ * Accepts a search callback function to allow different API implementations
+ * (e.g., web app API client vs extension API client)
+ */
+export function SearchComponent({ userId, onSearch }: SearchComponentProps) {
   const [query, setQuery] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -29,11 +35,7 @@ export function SearchComponent({ userId }: SearchComponentProps) {
       setStatus("Searching...");
       setResults([]);
 
-      // Set user ID on API client
-      apiClient.setUserId(userId);
-
-      // Search through API
-      const searchResults = await apiClient.search(query);
+      const searchResults = await onSearch(query);
 
       setResults(searchResults);
       setStatus(`Found ${searchResults.length} results ✅`);
@@ -123,3 +125,4 @@ export function SearchComponent({ userId }: SearchComponentProps) {
     </div>
   );
 }
+

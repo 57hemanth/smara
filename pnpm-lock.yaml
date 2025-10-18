@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  react: 18.2.0
+  react-dom: 18.2.0
+
 importers:
 
   .:
@@ -48,6 +52,12 @@ importers:
       '@plasmohq/storage':
         specifier: ^1.9.0
         version: 1.15.0(react@18.2.0)
+      '@smara/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@smara/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       plasmo:
         specifier: 0.90.5
         version: 0.90.5(@swc/core@1.13.5)(@types/node@20.11.5)(mustache@4.2.0)(postcss@8.5.6)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -88,15 +98,21 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.908.0
         version: 3.908.0
+      '@smara/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@smara/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: 15.5.4
-        version: 15.5.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.93.2)
+        version: 15.5.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.93.2)
       react:
-        specifier: 19.1.0
-        version: 19.1.0
+        specifier: 18.2.0
+        version: 18.2.0
       react-dom:
-        specifier: 19.1.0
-        version: 19.1.0(react@19.1.0)
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -118,6 +134,31 @@ importers:
         version: 4.1.14
       typescript:
         specifier: ^5
+        version: 5.9.3
+
+  packages/api-client:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+
+  packages/ui:
+    dependencies:
+      react:
+        specifier: 18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: 18.2.0
+        version: 18.2.0(react@18.2.0)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.2.0
+        version: 18.2.48
+      '@types/react-dom':
+        specifier: ^18.2.0
+        version: 18.2.18
+      typescript:
+        specifier: ^5.3.0
         version: 5.9.3
 
   workers/audio_to_text:
@@ -2023,8 +2064,8 @@ packages:
       qejs: ^3.0.5
       ractive: ^1.3.12
       razor-tmpl: ^1.3.1
-      react: ^18.2.0
-      react-dom: ^18.2.0
+      react: 18.2.0
+      react-dom: 18.2.0
       slm: ^2.0.0
       squirrelly: ^5.1.0
       teacup: ^2.0.0
@@ -2139,7 +2180,7 @@ packages:
   '@plasmohq/messaging@0.6.2':
     resolution: {integrity: sha512-CGfcvfVE0wsN/Y/i/jV0nwjkwh2gBCEujZFhLoxJ12N0ScoP3JVEIvUxJSFsAD4ylBQ8IjD2FyjQozwiSxWc4Q==}
     peerDependencies:
-      react: ^16.8.6 || ^17 || ^18
+      react: 18.2.0
     peerDependenciesMeta:
       react:
         optional: true
@@ -2210,7 +2251,7 @@ packages:
   '@plasmohq/storage@1.15.0':
     resolution: {integrity: sha512-zBZ2NyVyvZlql2XHsjkZDL0+bqF6lir9RygeTnkYGF253M8DZttuSvjpsmpK6OWYmRXjhEqJeubd3+Zq9kuZ0w==}
     peerDependencies:
-      react: ^16.8.6 || ^17 || ^18 || ^19.0.0
+      react: 18.2.0
     peerDependenciesMeta:
       react:
         optional: true
@@ -4035,8 +4076,8 @@ packages:
       '@opentelemetry/api': ^1.1.0
       '@playwright/test': ^1.51.1
       babel-plugin-react-compiler: '*'
-      react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
-      react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
       sass: ^1.3.0
     peerDependenciesMeta:
       '@opentelemetry/api':
@@ -4276,12 +4317,7 @@ packages:
   react-dom@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
-      react: ^18.2.0
-
-  react-dom@19.1.0:
-    resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
-    peerDependencies:
-      react: ^19.1.0
+      react: 18.2.0
 
   react-error-overlay@6.0.9:
     resolution: {integrity: sha512-nQTTcUu+ATDbrSD1BZHr5kgSD4oF8OFjxun8uAaL8RwPBacGBNPf/yAuVVdx17N8XNzRDMrZ9XcKZHCjPW+9ew==}
@@ -4296,10 +4332,6 @@ packages:
 
   react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
-    engines: {node: '>=0.10.0'}
-
-  react@19.1.0:
-    resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
     engines: {node: '>=0.10.0'}
 
   readdirp@3.6.0:
@@ -4381,9 +4413,6 @@ packages:
 
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
-
-  scheduler@0.26.0:
-    resolution: {integrity: sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==}
 
   semver@5.7.2:
     resolution: {integrity: sha512-cBznnQ9KjJqU67B52RMC65CMarK2600WFnbkcaiwWq3xy/5haFJlshgnpjovMVJ+Hff49d8GEn0b87C5pDQ10g==}
@@ -4507,7 +4536,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
       babel-plugin-macros: '*'
-      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0'
+      react: 18.2.0
     peerDependenciesMeta:
       '@babel/core':
         optional: true
@@ -7937,7 +7966,7 @@ snapshots:
 
   '@types/react-dom@18.2.18':
     dependencies:
-      '@types/react': 19.2.2
+      '@types/react': 18.2.48
 
   '@types/react-dom@19.2.1(@types/react@19.2.2)':
     dependencies:
@@ -9183,15 +9212,15 @@ snapshots:
       sax: 1.4.1
     optional: true
 
-  next@15.5.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.93.2):
+  next@15.5.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.93.2):
     dependencies:
       '@next/env': 15.5.4
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001749
       postcss: 8.4.31
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      styled-jsx: 5.1.6(react@19.1.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-jsx: 5.1.6(react@18.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 15.5.4
       '@next/swc-darwin-x64': 15.5.4
@@ -9487,11 +9516,6 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.2
 
-  react-dom@19.1.0(react@19.1.0):
-    dependencies:
-      react: 19.1.0
-      scheduler: 0.26.0
-
   react-error-overlay@6.0.9: {}
 
   react-refresh@0.14.0: {}
@@ -9501,8 +9525,6 @@ snapshots:
   react@18.2.0:
     dependencies:
       loose-envify: 1.4.0
-
-  react@19.1.0: {}
 
   readdirp@3.6.0:
     dependencies:
@@ -9578,8 +9600,6 @@ snapshots:
   scheduler@0.23.2:
     dependencies:
       loose-envify: 1.4.0
-
-  scheduler@0.26.0: {}
 
   semver@5.7.2: {}
 
@@ -9714,10 +9734,10 @@ snapshots:
 
   strnum@2.1.1: {}
 
-  styled-jsx@5.1.6(react@19.1.0):
+  styled-jsx@5.1.6(react@18.2.0):
     dependencies:
       client-only: 0.0.1
-      react: 19.1.0
+      react: 18.2.0
 
   sucrase@3.35.0:
     dependencies:

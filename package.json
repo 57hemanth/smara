@@ -28,5 +28,11 @@
     "turbo": "^2.5.8",
     "typescript": "^5.9.3",
     "wrangler": "^4.42.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "@smara/browser-extension>react": "18.2.0",
+      "@smara/browser-extension>react-dom": "18.2.0"
+    }
   }
 }

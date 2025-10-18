@@ -18,7 +18,9 @@
     "next": "15.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "@smara/ui": "workspace:*",
+    "@smara/api-client": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

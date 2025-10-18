@@ -1,13 +1,18 @@
 import { useState } from "react"
 import { useStorage } from "@plasmohq/storage/hook"
 import { UploadComponent, SearchComponent } from "./components"
-import { getApiUrl, isDevelopment } from "./lib/config"
+import { apiClient } from "./lib/api"
 
 type ActiveTab = 'upload' | 'search'
 
 function IndexPopup() {
   const [userId, setUserId] = useStorage("smara-user-id", "demo-user")
   const [activeTab, setActiveTab] = useState<ActiveTab>('upload')
+
+  // Set user ID on API client
+  if (userId) {
+    apiClient.setUserId(userId);
+  }
 
   const handleUploadComplete = (result: any) => {
     console.log("Upload completed:", result)
@@ -66,12 +71,16 @@ function IndexPopup() {
         <div className="min-h-32">
           {activeTab === 'upload' && (
             <UploadComponent 
-              userId={userId || 'demo-user'} 
+              userId={userId || 'demo-user'}
+              onUpload={(file, options) => apiClient.uploadFile(file, options)}
               onUploadComplete={handleUploadComplete}
             />
           )}
           {activeTab === 'search' && (
-            <SearchComponent userId={userId || 'demo-user'} />
+            <SearchComponent 
+              userId={userId || 'demo-user'}
+              onSearch={(query, options) => apiClient.search(query, options)}
+            />
           )}
         </div>
       </div>

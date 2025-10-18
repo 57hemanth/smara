@@ -1,12 +1,27 @@
 import { useState } from "react";
-import { apiClient } from "../lib/api";
+
+interface UploadResult {
+  success: boolean;
+  key: string;
+  assetId: string;
+  size: number;
+  contentType: string;
+  publicUrl: string | null;
+}
 
 interface UploadComponentProps {
   userId: string;
-  onUploadComplete?: (result: any) => void;
+  onUpload: (file: File, options?: { prefix?: string }) => Promise<UploadResult>;
+  onUploadComplete?: (result: UploadResult) => void;
 }
 
-export function UploadComponent({ userId, onUploadComplete }: UploadComponentProps) {
+/**
+ * UploadComponent for uploading files to SMARA
+ * 
+ * Accepts an upload callback function to allow different API implementations
+ * (e.g., web app API client vs extension API client)
+ */
+export function UploadComponent({ userId, onUpload, onUploadComplete }: UploadComponentProps) {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string>("");
   const [uploading, setUploading] = useState(false);
@@ -18,9 +33,6 @@ export function UploadComponent({ userId, onUploadComplete }: UploadComponentPro
       setUploading(true);
       setStatus("Uploading...");
 
-      // Set user ID on API client
-      apiClient.setUserId(userId);
-
       // Determine prefix based on file type
       const prefix = file.type.startsWith("image/")
         ? "images"
@@ -31,7 +43,7 @@ export function UploadComponent({ userId, onUploadComplete }: UploadComponentPro
         : "files";
 
       // Upload the file
-      const result = await apiClient.uploadFile(file, { prefix });
+      const result = await onUpload(file, { prefix });
 
       setStatus("Upload complete ✅");
       setFile(null);
@@ -83,3 +95,4 @@ export function UploadComponent({ userId, onUploadComplete }: UploadComponentPro
     </div>
   );
 }
+

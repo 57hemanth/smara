@@ -1,0 +1,13 @@
+{
+  "name": "@smara/api-client",
+  "version": "0.0.1",
+  "description": "Shared API client for SMARA backend",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
