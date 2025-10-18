@@ -1,4 +1,4 @@
-import type { R2Bucket, Fetcher, Queue } from '@cloudflare/workers-types'
+import type { R2Bucket, Queue } from '@cloudflare/workers-types'
 
 export interface IngestMessage {
   asset_id: string
@@ -12,10 +12,9 @@ export interface IngestMessage {
 export interface Env {
   // SMARA Standard Bindings
   R2: R2Bucket
+  
+  // Queue Producers - route to specialized processing queues
+  IMAGE_INGEST_QUEUE: Queue
+  AUDIO_INGEST_QUEUE: Queue
   EMBEDDING_QUEUE: Queue
-
-  // Service Bindings for Workers
-  IMAGE_TO_TEXT_SERVICE: Fetcher
-  AUDIO_TO_TEXT_SERVICE: Fetcher
-  TEXT_TO_EMBEDDING_SERVICE: Fetcher
 }

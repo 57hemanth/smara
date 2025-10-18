@@ -1,32 +1,16 @@
 import { IngestMessage, Env } from "../types"
 
 export async function processAudioMessage(message: IngestMessage, env: Env): Promise<void> {
-    console.log(`Processing audio: ${message.asset_id}`)
+    console.log(`Routing audio to audio-to-text queue: ${message.asset_id}`)
     
-    // Call audio-to-text service (Whisper)
-    const response = await env.AUDIO_TO_TEXT_SERVICE.fetch('http://localhost/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: message.r2_key })
-    })
-    
-    if (!response.ok) {
-      throw new Error(`Audio processing failed: ${response.status}`)
-    }
-    
-    const result = await response.json() as any
-    console.log(`Audio processed successfully: ${message.asset_id}`, result)
-    
-    // Store transcription as text chunks
-    const transcription = result.description || result.raw_response?.text || ''
-    if (transcription) {      
-      // Generate embeddings for searchability
-      await env.EMBEDDING_QUEUE.send({
-        text: transcription,
-        user_id: message.user_id,
+    // Send to audio processing queue
+    await env.AUDIO_INGEST_QUEUE.send({
         asset_id: message.asset_id,
+        user_id: message.user_id,
         r2_key: message.r2_key,
-        modality: message.modality
-      });
-    }
+        modality: message.modality,
+        mime: message.mime
+    });
+    
+    console.log(`Audio message queued for processing: ${message.asset_id}`)
 }

@@ -3,12 +3,25 @@
     "main": "index.ts",
     "compatibility_date": "2025-10-01",
     "ai": {
-      "binding": "AI"
+        "binding": "AI",
+        "remote": true
     },
     "r2_buckets": [
-      {
-        "binding": "R2",
-        "bucket_name": "smara"
-      }
-    ]
+        {
+            "binding": "R2",
+            "bucket_name": "smara",
+            "remote": true
+        }
+    ],
+    "queues": {
+        "consumers": [{
+            "queue": "smara-image-ingest",
+            "max_batch_size": 1,
+            "max_batch_timeout": 0
+        }],
+        "producers": [{
+            "binding": "EMBEDDING_QUEUE",
+            "queue": "smara-embedding-queue"
+        }]
+    }
 }

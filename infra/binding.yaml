@@ -1,0 +1,72 @@
+# SMARA - Canonical Bindings Reference
+# All workers/apps should use these binding names for consistency
+
+# R2 Object Storage
+r2_buckets:
+  - binding: R2
+    bucket_name: smara
+    description: Main object storage for uploaded media files
+
+# D1 Database
+d1_databases:
+  - binding: DB
+    database_name: metadata_db
+    description: SQLite database for asset metadata, labels, and text chunks
+
+# Vectorize Index
+vectorize:
+  - binding: VECTORIZE
+    index_name: smara-index
+    description: Vector database for searchable embeddings
+
+# Workers AI
+ai:
+  binding: AI
+  description: Workers AI for embeddings, ASR, and vision models
+
+# Queue Architecture
+queues:
+  # Main ingestion queue - receives all uploads from backend API
+  - name: smara-ingest-queue
+    description: Main entry point for all content ingestion
+    consumers:
+      - worker: smara-queue-consumer
+        role: Router - dispatches to specialized processing queues based on modality
+    
+  # Specialized processing queues
+  - name: smara-image-ingest
+    description: Image processing queue
+    consumers:
+      - worker: smara-image-to-text
+        role: Generate descriptions using LLaVA vision model
+    
+  - name: smara-audio-ingest
+    description: Audio processing queue
+    consumers:
+      - worker: smara-audio-to-text
+        role: Transcribe audio using Whisper ASR
+  
+  # Final embedding generation queue
+  - name: smara-embedding-queue
+    description: Text to vector embedding queue
+    consumers:
+      - worker: smara-text-to-embedding
+        role: Generate embeddings and upsert to Vectorize
+
+# Queue Flow
+# Content Source → Backend API → smara-ingest-queue → queue_consumer (router)
+#                                                           ↓
+#                                    ┌──────────────────────┼──────────────────────┐
+#                                    ↓                      ↓                      ↓
+#                          smara-image-ingest    smara-audio-ingest      (text direct)
+#                                    ↓                      ↓                      ↓
+#                              image_to_text          audio_to_text               |
+#                                    ↓                      ↓                      ↓
+#                                    └──────────────────────┼──────────────────────┘
+#                                                           ↓
+#                                              smara-embedding-queue
+#                                                           ↓
+#                                                  text_to_embedding
+#                                                           ↓
+#                                                   Vectorize (searchable)
+

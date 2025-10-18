@@ -12,5 +12,16 @@
             "bucket_name": "smara",
             "remote": true
         }
-    ]
+    ],
+    "queues": {
+        "consumers": [{
+            "queue": "smara-audio-ingest",
+            "max_batch_size": 1,
+            "max_batch_timeout": 0
+        }],
+        "producers": [{
+            "binding": "EMBEDDING_QUEUE",
+            "queue": "smara-embedding-queue"
+        }]
+    }
 }
