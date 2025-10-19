@@ -187,6 +187,7 @@ export class SmaraApiClient {
 
     const body = {
       query,
+      user_id: this.userId,
       ...options,
     };
 
