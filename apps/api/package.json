@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "hono": "^4.9.11",
-    "nanoid": "^5.1.6"
+    "nanoid": "^5.1.6",
+    "@smara/database": "workspace:*",
+    "@smara/schema": "workspace:*"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251011.0",

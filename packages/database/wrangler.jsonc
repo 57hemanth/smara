@@ -1,0 +1,11 @@
+{
+  "name": "smara-db-migrations",
+  "compatibility_date": "2024-01-01",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "smara_db",
+      "database_id": "77c5f2a3-0332-4f46-8339-18e00b089fd6"
+    }
+  ]
+}

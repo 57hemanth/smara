@@ -6,11 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
     "build": "turbo run build",
     "build:web": "pnpm --filter web build",
     "deploy:web": "pnpm --filter web run deploy",
     "deploy:workers": "turbo run deploy --filter \"workers/*\"",
-    "migrate:d1": "wrangler d1 migrations apply metadata_db",
+    "db:generate": "pnpm --filter @smara/database db:generate",
+    "db:migrate:local": "pnpm --filter @smara/database db:migrate:local",
+    "db:migrate:prod": "pnpm --filter @smara/database db:migrate:prod",
+    "db:studio": "pnpm --filter @smara/database db:studio",
     "cf:login": "wrangler login"
   },
   "workspaces": [

@@ -3,7 +3,7 @@ export interface Env {
   // R2 Storage
   R2: R2Bucket;
   INGEST_QUEUE: Queue;
-  
+  DB: D1Database;
   // Service Bindings
   SEARCH_WORKER: Fetcher;
   
