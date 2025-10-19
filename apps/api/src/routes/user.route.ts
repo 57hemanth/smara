@@ -6,5 +6,6 @@ const userRoutes = new Hono<{ Bindings: Env; Variables: Variables }>();
 
 userRoutes.get('/', UserController.getUser);
 userRoutes.post('/', UserController.createUser);
+userRoutes.post('/login', UserController.login);
 
 export default userRoutes;

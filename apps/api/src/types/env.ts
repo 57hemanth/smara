@@ -10,6 +10,7 @@ export interface Env {
   // Environment Variables (from wrangler.jsonc vars)
   ALLOWED_ORIGINS?: string;
   R2_PUBLIC_BASE_URL?: string;
+  JWT_SECRET: string;
 }
 
 // Hono Context Variables (for middleware to pass data)

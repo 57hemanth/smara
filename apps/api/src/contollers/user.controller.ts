@@ -3,6 +3,7 @@ import type { Env, Variables } from "../types/env";
 import { createDbClient, UserRepository } from "@smara/database";
 import { userSchema } from "@smara/schema/user";
 import { nanoid } from "nanoid";
+import { hashPassword, verifyPassword, generateToken } from "../utils/auth.utils";
 
 class UserController {
   static async getUser(c: Context<{ Bindings: Env; Variables: Variables }>) {
@@ -48,8 +49,8 @@ class UserController {
         return c.json({ error: 'User already exists' }, 409);
       }
 
-      // TODO: Hash password before storing (add bcrypt/argon2 in production)
-      const hashedPassword = parsed.data.password;
+      // Hash password
+      const hashedPassword = await hashPassword(parsed.data.password);
 
       const newUser = await userRepo.create({
         id: nanoid(),
@@ -58,10 +59,54 @@ class UserController {
         password: hashedPassword,
       });
 
+      // Generate JWT token
+      const token = await generateToken(newUser.id, c.env.JWT_SECRET);
+
       const { password, ...userWithoutPassword } = newUser;
-      return c.json(userWithoutPassword, 201);
+      return c.json({ 
+        user: userWithoutPassword,
+        token 
+      }, 201);
     } catch (error) {
       console.error('Error creating user:', error);
+      return c.json({ error: 'Internal server error' }, 500);
+    }
+  }
+
+  static async login(c: Context<{ Bindings: Env; Variables: Variables }>) {
+    try {
+      const body = await c.req.json();
+      const { email, password } = body;
+
+      if (!email || !password) {
+        return c.json({ error: 'Email and password are required' }, 400);
+      }
+
+      const db = createDbClient(c.env.DB);
+      const userRepo = new UserRepository(db);
+
+      // Find user by email
+      const user = await userRepo.findByEmail(email);
+      if (!user) {
+        return c.json({ error: 'Invalid credentials' }, 401);
+      }
+
+      // Verify password
+      const isValidPassword = await verifyPassword(password, user.password);
+      if (!isValidPassword) {
+        return c.json({ error: 'Invalid credentials' }, 401);
+      }
+
+      // Generate JWT token
+      const token = await generateToken(user.id, c.env.JWT_SECRET);
+
+      const { password: _, ...userWithoutPassword } = user;
+      return c.json({ 
+        user: userWithoutPassword,
+        token 
+      });
+    } catch (error) {
+      console.error('Error during login:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
   }

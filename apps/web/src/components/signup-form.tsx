@@ -52,15 +52,16 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     setIsLoading(true)
 
     try {
-      const user = await apiClient.createUser({
+      const response = await apiClient.createUser({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       })
 
-      // Store user ID in localStorage
-      localStorage.setItem("smara_user_id", user.id)
-      localStorage.setItem("smara_user", JSON.stringify(user))
+      // Store JWT token and user info in localStorage
+      localStorage.setItem("smara_token", response.token)
+      localStorage.setItem("smara_user_id", response.user.id)
+      localStorage.setItem("smara_user", JSON.stringify(response.user))
 
       // Redirect to upload page
       router.push("/upload")

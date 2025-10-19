@@ -43,11 +43,30 @@ export interface CreateUserRequest {
 }
 
 export interface CreateUserResponse {
-  id: string;
-  name: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    created_at: string;
+    updated_at: string;
+  };
+  token: string;
+}
+
+export interface LoginRequest {
   email: string;
-  created_at: string;
-  updated_at: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    created_at: string;
+    updated_at: string;
+  };
+  token: string;
 }
 
 export interface ApiClientOptions {
@@ -213,12 +232,37 @@ export class SmaraApiClient {
       throw new Error(error.error || `User creation failed: ${response.status}`);
     }
 
-    const user = await response.json();
+    const result = await response.json();
     
     // Automatically set the user ID after successful creation
-    this.setUserId(user.id);
+    this.setUserId(result.user.id);
     
-    return user;
+    return result;
+  }
+
+  /**
+   * Login with email and password
+   */
+  async login(data: LoginRequest): Promise<LoginResponse> {
+    const response = await fetch(`${this.baseUrl}/user/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Login failed' }));
+      throw new Error(error.error || `Login failed: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    // Automatically set the user ID after successful login
+    this.setUserId(result.user.id);
+    
+    return result;
   }
 
   /**
