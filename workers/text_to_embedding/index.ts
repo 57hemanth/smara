@@ -68,7 +68,6 @@ export default {
                     : body.asset_id;
 
                 const metadata = {
-                    text: body.text,
                     user_id: body.user_id,
                     workspace_id: body.workspace_id,
                     asset_id: body.asset_id,

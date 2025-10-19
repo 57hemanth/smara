@@ -11,7 +11,6 @@ interface SearchWorkerResponse {
         date: string;
         modality: string;
         r2_key: string;
-        text?: string;
         user_id: string;
         workspace_id?: string;
         asset_id?: string;
@@ -93,7 +92,6 @@ class SearchController {
               ...(match.metadata.asset_id && { asset_id: match.metadata.asset_id }),
               ...(match.metadata.chunk_id && { chunk_id: match.metadata.chunk_id }),
               ...(match.metadata.url && { url: match.metadata.url }),
-              ...(match.metadata.text && { text: match.metadata.text }),
             },
             ...(preview && { preview }),
           };
