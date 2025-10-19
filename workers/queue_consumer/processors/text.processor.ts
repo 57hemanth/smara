@@ -16,6 +16,7 @@ export async function processTextMessage(message: IngestMessage, env: Env): Prom
     await env.EMBEDDING_QUEUE.send({
       text: text,
       user_id: message.user_id,
+      workspace_id: message.workspace_id,
       asset_id: message.asset_id,
       r2_key: message.r2_key,
       modality: message.modality

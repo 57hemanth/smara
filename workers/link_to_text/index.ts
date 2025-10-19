@@ -10,6 +10,7 @@ export interface Env {
 interface LinkIngestMessage {
     asset_id: string;
     user_id: string;
+    workspace_id: string;
     r2_key: string;
     modality: string;
     mime: string;
@@ -19,6 +20,7 @@ interface LinkIngestMessage {
 interface EmbeddingMessage {
     text: string;
     user_id: string;
+    workspace_id: string;
     asset_id: string;
     r2_key: string;
     modality: string;
@@ -84,6 +86,7 @@ export default {
                 const embeddingMessage: EmbeddingMessage = {
                     text: transcript,
                     user_id: body.user_id,
+                    workspace_id: body.workspace_id,
                     asset_id: body.asset_id,
                     r2_key: body.r2_key,
                     modality: 'link',

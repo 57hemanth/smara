@@ -43,21 +43,21 @@ function getYoutubeVideoId(url: string): string | null {
 
 class UploadController {
   /**
-   * Helper to get or create default workspace for user
+   * Helper to get or create workspace for user by name
    */
-  private static async getOrCreateWorkspace(db: any, userId: string): Promise<string> {
+  private static async getOrCreateWorkspace(db: any, userId: string, workspaceName: string = 'My Workspace'): Promise<string> {
     const workspaceRepo = new WorkspaceRepository(db);
     
-    // Try to find existing workspace
-    const workspaces = await workspaceRepo.findByUserId(userId);
-    if (workspaces.length > 0) {
-      return workspaces[0].id;
+    // Try to find existing workspace by name
+    const existingWorkspace = await workspaceRepo.findByUserIdAndName(userId, workspaceName);
+    if (existingWorkspace) {
+      return existingWorkspace.id;
     }
     
-    // Create default workspace
+    // Create new workspace with specified name
     const workspace = await workspaceRepo.create({
       id: nanoid(),
-      name: 'My Workspace',
+      name: workspaceName,
       user_id: userId,
     });
     
@@ -76,6 +76,7 @@ class UploadController {
   static async upload(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
+      const workspaceName = c.req.header('X-Workspace') || 'My Workspace';
   
       const contentType = c.req.header('content-type') || 'application/octet-stream';
       const contentLengthStr = c.req.header('content-length');
@@ -137,8 +138,8 @@ class UploadController {
       const db = createDbClient(c.env.DB);
       const assetRepo = new AssetRepository(db);
 
-      // Get or create workspace
-      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId);
+      // Get or create workspace by name
+      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId, workspaceName);
 
       // Check for duplicate (same hash for same user)
       const existingAsset = await assetRepo.findBySha256(sha256, userId);
@@ -187,10 +188,11 @@ class UploadController {
         status: 'pending',
       });
 
-      // Publish to queue
+      // Publish to queue with workspace_id
       await c.env.INGEST_QUEUE.send({ 
         r2_key: key, 
         user_id: userId, 
+        workspace_id: workspaceId,
         mime: contentType, 
         modality: modality, 
         asset_id: id 
@@ -216,6 +218,7 @@ class UploadController {
   static async uploadUrl(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
+      const workspaceName = c.req.header('X-Workspace') || 'My Workspace';
       
       // Parse request body
       const body = await c.req.json();
@@ -260,8 +263,8 @@ class UploadController {
       const db = createDbClient(c.env.DB);
       const assetRepo = new AssetRepository(db);
 
-      // Get or create workspace
-      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId);
+      // Get or create workspace by name
+      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId, workspaceName);
 
       // Check for duplicate URL
       const existingAsset = await assetRepo.findBySha256(sha256, userId);
@@ -304,10 +307,11 @@ class UploadController {
         status: 'pending',
       });
 
-      // Publish to queue with link modality
+      // Publish to queue with link modality and workspace_id
       await c.env.INGEST_QUEUE.send({ 
         r2_key: key, 
         user_id: userId, 
+        workspace_id: workspaceId,
         mime: 'application/json', 
         modality: 'link',
         asset_id: id,

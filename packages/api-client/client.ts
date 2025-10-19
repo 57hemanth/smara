@@ -76,7 +76,12 @@ export interface ApiClientOptions {
 
 export interface UploadOptions {
   prefix?: string;
+  workspace?: string;
   onProgress?: (progress: number) => void;
+}
+
+export interface UrlUploadOptions {
+  workspace?: string;
 }
 
 export interface SearchOptions {
@@ -124,6 +129,11 @@ export class SmaraApiClient {
       headers['X-User-Id'] = this.userId;
     }
 
+    // Add workspace if specified
+    if (options?.workspace) {
+      headers['X-Workspace'] = options.workspace;
+    }
+
     // Build URL with optional prefix
     const url = new URL(`${this.baseUrl}/upload`);
     if (options?.prefix) {
@@ -148,7 +158,7 @@ export class SmaraApiClient {
    * Upload URL (YouTube link) to backend API
    * The API will create metadata and queue for transcript processing
    */
-  async uploadUrl(url: string): Promise<UploadResult> {
+  async uploadUrl(url: string, options?: UrlUploadOptions): Promise<UploadResult> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -156,6 +166,11 @@ export class SmaraApiClient {
     // Add user ID if available
     if (this.userId) {
       headers['X-User-Id'] = this.userId;
+    }
+
+    // Add workspace if specified
+    if (options?.workspace) {
+      headers['X-Workspace'] = options.workspace;
     }
 
     const response = await fetch(`${this.baseUrl}/upload/url`, {

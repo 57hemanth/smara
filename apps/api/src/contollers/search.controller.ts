@@ -13,6 +13,10 @@ interface SearchWorkerResponse {
         r2_key: string;
         text?: string;
         user_id: string;
+        workspace_id?: string;
+        asset_id?: string;
+        chunk_id?: string;
+        url?: string;
       };
     }>;
   };
@@ -85,6 +89,10 @@ class SearchController {
             metadata: {
               date: match.metadata.date,
               r2_key: match.metadata.r2_key,
+              ...(match.metadata.workspace_id && { workspace_id: match.metadata.workspace_id }),
+              ...(match.metadata.asset_id && { asset_id: match.metadata.asset_id }),
+              ...(match.metadata.chunk_id && { chunk_id: match.metadata.chunk_id }),
+              ...(match.metadata.url && { url: match.metadata.url }),
               ...(match.metadata.text && { text: match.metadata.text }),
             },
             ...(preview && { preview }),

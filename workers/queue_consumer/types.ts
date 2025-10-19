@@ -3,6 +3,7 @@ import type { R2Bucket, Queue } from '@cloudflare/workers-types'
 export interface IngestMessage {
   asset_id: string
   user_id: string
+  workspace_id: string
   r2_key: string
   mime: string
   modality: 'image' | 'audio' | 'video' | 'text' | 'link'

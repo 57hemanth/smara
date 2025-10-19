@@ -18,6 +18,7 @@ export default function UploadPage() {
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [workspaceName, setWorkspaceName] = useState<string>("My Workspace");
 
   // Check authentication on mount
   useEffect(() => {
@@ -71,8 +72,11 @@ export default function UploadPage() {
         ? "audio"
         : "files";
 
-      // Upload directly through Hono API
-      const result = await apiClient.uploadFile(file, { prefix });
+      // Upload directly through Hono API with workspace
+      const result = await apiClient.uploadFile(file, { 
+        prefix, 
+        workspace: workspaceName 
+      });
 
       setUploadedKey(result.key);
       setPublicUrl(result.publicUrl);
@@ -92,8 +96,10 @@ export default function UploadPage() {
 
       setStatus("Processing YouTube URL…");
 
-      // Upload URL through API
-      const result = await apiClient.uploadUrl(url);
+      // Upload URL through API with workspace
+      const result = await apiClient.uploadUrl(url, { 
+        workspace: workspaceName 
+      });
 
       setUploadedKey(result.key);
       setPublicUrl(url); // For links, show original YouTube URL
@@ -126,6 +132,23 @@ export default function UploadPage() {
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-semibold">Upload Content</h1>
+
+      {/* Workspace Selector */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Workspace
+        </label>
+        <input
+          type="text"
+          value={workspaceName}
+          onChange={(e) => setWorkspaceName(e.target.value)}
+          placeholder="My Workspace"
+          className="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+        <p className="text-xs text-gray-500">
+          Files will be organized in this workspace. Default: "My Workspace"
+        </p>
+      </div>
 
       {/* Mode Selector */}
       <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">

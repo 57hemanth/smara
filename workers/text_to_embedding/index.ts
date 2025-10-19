@@ -8,6 +8,7 @@ export interface Env {
 interface EmbeddingMessage {
     text: string;
     user_id: string;
+    workspace_id: string;
     asset_id: string;
     r2_key: string;
     source_r2_key?: string;  // Original asset r2_key for search results
@@ -39,13 +40,14 @@ export default {
                     continue;
                 }
 
-                if (!body.user_id || !body.asset_id) {
-                    console.error(`Message ${message.id}: Missing required fields (user_id or asset_id)`);
+                if (!body.user_id || !body.asset_id || !body.workspace_id) {
+                    console.error(`Message ${message.id}: Missing required fields (user_id, asset_id, or workspace_id)`);
+                    console.error(`Received body:`, JSON.stringify(body, null, 2));
                     message.retry();
                     continue;
                 }
 
-                console.log(`Processing embedding for asset: ${body.asset_id}, modality: ${body.modality}`);
+                console.log(`Processing embedding for asset: ${body.asset_id}, modality: ${body.modality}, workspace_id: ${body.workspace_id}`);
 
                 const aiRes = await env.AI.run(
                     MODEL,
@@ -65,20 +67,25 @@ export default {
                     ? `${body.asset_id}_${body.chunk_id}`
                     : body.asset_id;
 
+                const metadata = {
+                    text: body.text,
+                    user_id: body.user_id,
+                    workspace_id: body.workspace_id,
+                    asset_id: body.asset_id,
+                    modality: body.modality,
+                    date: new Date().toISOString(),
+                    r2_key: body.r2_key,
+                    chunk_id: body.chunk_id,
+                    url: body.url,  // Store YouTube URL for link modality
+                };
+
+                console.log(`Upserting to Vectorize with metadata:`, JSON.stringify(metadata, null, 2));
+
                 const vectorizeRes = await env.VECTORIZE.upsert([
                     {
                         id: vectorId,
                         values: aiRes.data[0],
-                        metadata: {
-                            text: body.text,
-                            user_id: body.user_id,
-                            asset_id: body.asset_id,
-                            modality: body.modality,
-                            date: new Date().toISOString(),
-                            r2_key: body.r2_key,
-                            chunk_id: body.chunk_id,
-                            url: body.url,  // Store YouTube URL for link modality
-                        },
+                        metadata: metadata,
                     }
                 ]);
 

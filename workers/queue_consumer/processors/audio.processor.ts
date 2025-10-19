@@ -7,6 +7,7 @@ export async function processAudioMessage(message: IngestMessage, env: Env): Pro
     await env.AUDIO_INGEST_QUEUE.send({
         asset_id: message.asset_id,
         user_id: message.user_id,
+        workspace_id: message.workspace_id,
         r2_key: message.r2_key,
         modality: message.modality,
         mime: message.mime

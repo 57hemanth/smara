@@ -36,7 +36,8 @@ app.use('*', (c, next) => {
       return null;
     },
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-User-Id', 'X-Workspace', 'Content-Length'],
+    exposeHeaders: ['Content-Length', 'Content-Type'],
     credentials: true,
   })(c, next);
 });
