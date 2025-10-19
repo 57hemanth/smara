@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api";
 import { MediaPreview } from "@/components";
 
@@ -14,22 +15,36 @@ interface SearchResult {
 }
 
 export default function SearchPage() {
+  const router = useRouter();
   const [query, setQuery] = useState<string>("");
-  const [userId, setUserId] = useState<string>("demo-user");
+  const [userId, setUserId] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("smara_user_id");
+    const storedToken = localStorage.getItem("smara_token");
+    
+    if (storedUserId && storedToken) {
+      setUserId(storedUserId);
+      setIsAuthenticated(true);
+      apiClient.setUserId(storedUserId);
+    } else {
+      // Redirect to login if not authenticated
+      router.push("/login");
+    }
+  }, [router]);
 
   async function handleSearch() {
     try {
-      if (!query.trim()) return;
+      if (!query.trim() || !userId) return;
 
       setLoading(true);
       setStatus("Searching...");
       setResults([]);
-
-      // Set user ID (later this will come from auth)
-      apiClient.setUserId(userId);
 
       // Search through API
       const searchResults = await apiClient.search(query);
@@ -48,22 +63,17 @@ export default function SearchPage() {
     }
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 text-center">
+        <p>Redirecting to login...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-semibold">Search Your Files</h1>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">
-          User ID (for testing - will use auth later)
-        </label>
-        <input
-          type="text"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter user ID"
-          className="block w-full px-3 py-2 border rounded-lg text-sm"
-        />
-      </div>
 
       <div className="space-y-2">
         <label className="block text-sm font-medium">Search Query</label>

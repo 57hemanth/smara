@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/api";
 import { isYoutubeUrl, getYoutubeVideoId } from "@/lib/youtube";
 
 type UploadMode = 'file' | 'url';
 
 export default function UploadPage() {
+  const router = useRouter();
   const [mode, setMode] = useState<UploadMode>('file');
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState<string>("");
@@ -14,7 +16,23 @@ export default function UploadPage() {
   const [status, setStatus] = useState<string>("");
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>("demo-user");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  // Check authentication on mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("smara_user_id");
+    const storedToken = localStorage.getItem("smara_token");
+    
+    if (storedUserId && storedToken) {
+      setUserId(storedUserId);
+      setIsAuthenticated(true);
+      apiClient.setUserId(storedUserId);
+    } else {
+      // Redirect to login if not authenticated
+      router.push("/login");
+    }
+  }, [router]);
 
   function validateUrl(url: string): boolean {
     setUrlError("");
@@ -40,12 +58,9 @@ export default function UploadPage() {
 
   async function handleFileUpload() {
     try {
-      if (!file) return;
+      if (!file || !userId) return;
 
       setStatus("Uploading to R2…");
-
-      // Set user ID (later this will come from auth)
-      apiClient.setUserId(userId);
 
       // Determine prefix based on file type
       const prefix = file.type.startsWith("image/")
@@ -73,12 +88,9 @@ export default function UploadPage() {
 
   async function handleUrlUpload() {
     try {
-      if (!validateUrl(url)) return;
+      if (!validateUrl(url) || !userId) return;
 
       setStatus("Processing YouTube URL…");
-
-      // Set user ID (later this will come from auth)
-      apiClient.setUserId(userId);
 
       // Upload URL through API
       const result = await apiClient.uploadUrl(url);
@@ -103,22 +115,17 @@ export default function UploadPage() {
     setPublicUrl(null);
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-xl mx-auto p-6 text-center">
+        <p>Redirecting to login...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-semibold">Upload Content</h1>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">
-          User ID (for testing - will use auth later)
-        </label>
-        <input
-          type="text"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="Enter user ID"
-          className="block w-full px-3 py-2 border rounded-lg text-sm"
-        />
-      </div>
 
       {/* Mode Selector */}
       <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">

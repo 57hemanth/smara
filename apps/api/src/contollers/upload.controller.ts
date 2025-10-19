@@ -2,6 +2,7 @@ import { Context } from "hono";
 import { sanitizePathSegment, extFromType, modalityFromType } from "../utils/r2.utils";
 import { nanoid } from "nanoid";
 import type { Env, Variables } from "../types/env";
+import { createDbClient, WorkspaceRepository, AssetRepository } from "@smara/database";
 
 /**
  * YouTube URL validation utilities
@@ -41,6 +42,37 @@ function getYoutubeVideoId(url: string): string | null {
 }
 
 class UploadController {
+  /**
+   * Helper to get or create default workspace for user
+   */
+  private static async getOrCreateWorkspace(db: any, userId: string): Promise<string> {
+    const workspaceRepo = new WorkspaceRepository(db);
+    
+    // Try to find existing workspace
+    const workspaces = await workspaceRepo.findByUserId(userId);
+    if (workspaces.length > 0) {
+      return workspaces[0].id;
+    }
+    
+    // Create default workspace
+    const workspace = await workspaceRepo.create({
+      id: nanoid(),
+      name: 'My Workspace',
+      user_id: userId,
+    });
+    
+    return workspace.id;
+  }
+
+  /**
+   * Calculate SHA-256 hash from ReadableStream
+   */
+  private static async calculateHash(data: Uint8Array): Promise<string> {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data as Uint8Array<ArrayBuffer>);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   static async upload(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
@@ -73,14 +105,61 @@ class UploadController {
       const ext = extFromType(contentType);
       const key = `${prefix}/${userId}/${yyyy}-${mm}/${id}.${ext}`;
   
-      // Stream body → R2
+      // Read body as array buffer for hashing
       const body = c.req.raw.body;
       if (!body) {
         return c.json({ error: 'No request body' }, 400);
       }
+
+      // Read stream to buffer (needed for hash calculation)
+      const reader = body.getReader();
+      const chunks: Uint8Array[] = [];
+      let totalBytes = 0;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        totalBytes += value.length;
+      }
+
+      const fileData = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        fileData.set(chunk, offset);
+        offset += chunk.length;
+      }
+
+      // Calculate hash
+      const sha256 = await UploadController.calculateHash(fileData);
+
+      // Initialize database
+      const db = createDbClient(c.env.DB);
+      const assetRepo = new AssetRepository(db);
+
+      // Get or create workspace
+      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId);
+
+      // Check for duplicate (same hash for same user)
+      const existingAsset = await assetRepo.findBySha256(sha256, userId);
+      if (existingAsset) {
+        const publicUrl = c.env.R2_PUBLIC_BASE_URL 
+          ? `${c.env.R2_PUBLIC_BASE_URL}/${existingAsset.r2_key}` 
+          : null;
+        
+        return c.json({
+          success: true,
+          duplicate: true,
+          key: existingAsset.r2_key,
+          assetId: existingAsset.id,
+          size: existingAsset.bytes,
+          contentType: existingAsset.mime,
+          publicUrl
+        }, 200);
+      }
   
-      // R2 accepts ReadableStream directly
-      await c.env.R2.put(key, body, {
+      // Upload to R2
+      await c.env.R2.put(key, fileData, {
         httpMetadata: { contentType },
         customMetadata: { 
           userId,
@@ -92,17 +171,37 @@ class UploadController {
         ? `${c.env.R2_PUBLIC_BASE_URL}/${key}` 
         : null;
 
-      const modality = modalityFromType(contentType);
+      const modality = modalityFromType(contentType) as 'image' | 'audio' | 'video' | 'text' | 'link';
+
+      // Create asset record in D1
+      await assetRepo.create({
+        id,
+        user_id: userId,
+        workspace_id: workspaceId,
+        r2_key: key,
+        mime: contentType,
+        modality,
+        bytes: totalBytes,
+        sha256,
+        source: 'web',
+        status: 'pending',
+      });
 
       // Publish to queue
-      await c.env.INGEST_QUEUE.send({ r2_key: key, user_id: userId, mime: contentType, modality: modality, asset_id: id });
+      await c.env.INGEST_QUEUE.send({ 
+        r2_key: key, 
+        user_id: userId, 
+        mime: contentType, 
+        modality: modality, 
+        asset_id: id 
+      });
       
       return c.json(
         { 
           success: true, 
           key, 
           assetId: id,
-          size: contentLength, 
+          size: totalBytes, 
           contentType, 
           publicUrl 
         },
@@ -151,8 +250,35 @@ class UploadController {
         captured_at: now.toISOString()
       };
 
+      const metadataStr = JSON.stringify(metadata);
+      const metadataBytes = new TextEncoder().encode(metadataStr);
+      
+      // Calculate hash from URL (for deduplication)
+      const sha256 = await UploadController.calculateHash(metadataBytes);
+
+      // Initialize database
+      const db = createDbClient(c.env.DB);
+      const assetRepo = new AssetRepository(db);
+
+      // Get or create workspace
+      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId);
+
+      // Check for duplicate URL
+      const existingAsset = await assetRepo.findBySha256(sha256, userId);
+      if (existingAsset) {
+        return c.json({
+          success: true,
+          duplicate: true,
+          key: existingAsset.r2_key,
+          assetId: existingAsset.id,
+          size: existingAsset.bytes,
+          contentType: existingAsset.mime,
+          publicUrl: url
+        }, 200);
+      }
+
       // Store metadata in R2
-      await c.env.R2.put(key, JSON.stringify(metadata), {
+      await c.env.R2.put(key, metadataStr, {
         httpMetadata: { 
           contentType: 'application/json' 
         },
@@ -161,6 +287,21 @@ class UploadController {
           uploadedAt: now.toISOString(),
           videoId
         }
+      });
+
+      // Create asset record in D1
+      await assetRepo.create({
+        id,
+        user_id: userId,
+        workspace_id: workspaceId,
+        r2_key: key,
+        mime: 'application/json',
+        modality: 'link',
+        bytes: metadataBytes.length,
+        sha256,
+        source: 'web',
+        source_url: url,
+        status: 'pending',
       });
 
       // Publish to queue with link modality
@@ -178,7 +319,7 @@ class UploadController {
           success: true,
           key,
           assetId: id,
-          size: JSON.stringify(metadata).length,
+          size: metadataBytes.length,
           contentType: 'application/json',
           publicUrl: url  // Return original YouTube URL as "public URL"
         },
