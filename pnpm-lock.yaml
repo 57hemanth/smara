@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@smara/browser-extension>react': 18.2.0
-  '@smara/browser-extension>react-dom': 18.2.0
-
 importers:
 
   .:
@@ -204,11 +200,11 @@ importers:
         version: 19.1.0(react@19.1.0)
     devDependencies:
       '@types/react':
-        specifier: ^18.2.0
-        version: 18.2.48
+        specifier: ^19
+        version: 19.2.2
       '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.2.18
+        specifier: ^19
+        version: 19.2.1(@types/react@19.2.2)
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -8545,7 +8541,7 @@ snapshots:
 
   '@types/react-dom@18.2.18':
     dependencies:
-      '@types/react': 18.2.48
+      '@types/react': 19.2.2
 
   '@types/react-dom@19.2.1(@types/react@19.2.2)':
     dependencies:

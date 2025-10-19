@@ -28,6 +28,28 @@ export interface HealthCheckResult {
   version: string;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface CreateUserResponse {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ApiClientOptions {
   baseUrl?: string;
   userId?: string;
@@ -171,6 +193,54 @@ export class SmaraApiClient {
     if (!response.ok) {
       throw new Error('API is not responding');
     }
+    return await response.json();
+  }
+
+  /**
+   * Create a new user account
+   */
+  async createUser(data: CreateUserRequest): Promise<CreateUserResponse> {
+    const response = await fetch(`${this.baseUrl}/user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'User creation failed' }));
+      throw new Error(error.error || `User creation failed: ${response.status}`);
+    }
+
+    const user = await response.json();
+    
+    // Automatically set the user ID after successful creation
+    this.setUserId(user.id);
+    
+    return user;
+  }
+
+  /**
+   * Get user by ID
+   */
+  async getUser(): Promise<User> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const response = await fetch(`${this.baseUrl}/user`, {
+      method: 'GET',
+      headers: {
+        'X-User-Id': this.userId,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to get user' }));
+      throw new Error(error.error || `Failed to get user: ${response.status}`);
+    }
+
     return await response.json();
   }
 }
