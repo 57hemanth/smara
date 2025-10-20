@@ -16,4 +16,7 @@ folderRoutes.put('/:id', FolderController.updateFolder);
 // DELETE /folders/:id - Delete folder
 folderRoutes.delete('/:id', FolderController.deleteFolder);
 
+// GET /folders/:id/assets - Get assets for folder
+folderRoutes.get('/:id/assets', FolderController.getFolderAssets);
+
 export default folderRoutes;

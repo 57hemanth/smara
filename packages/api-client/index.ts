@@ -18,5 +18,7 @@ export {
   type UpdateFolderRequest,
   type FoldersResponse,
   type FolderResponse,
+  type Asset,
+  type AssetsResponse,
 } from './client';
 

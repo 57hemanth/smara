@@ -23,4 +23,6 @@ export type {
   UpdateFolderRequest,
   FoldersResponse,
   FolderResponse,
+  Asset,
+  AssetsResponse,
 } from '@smara/api-client';

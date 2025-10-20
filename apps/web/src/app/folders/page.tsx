@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Folder, Plus, Edit2, Trash2, Calendar } from "lucide-react"
+import { Folder, Plus, Edit2, Trash2, Calendar, ExternalLink } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { PageLayout } from "@/components/layout"
 import { apiClient, type Folder as ApiFolder } from "@/lib/api"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 // Date formatting helper
 const formatRelativeDate = (date: string) => {
   const now = new Date()
@@ -28,6 +30,7 @@ type Folder = ApiFolder
 
 export default function FoldersPage() {
   const { userId } = useAuth()
+  const router = useRouter()
   const [folders, setFolders] = useState<Folder[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -133,10 +136,20 @@ export default function FoldersPage() {
     }
   }
 
-  const openEditDialog = (folder: Folder) => {
+  const openEditDialog = (folder: Folder, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent folder click
     setEditingFolder(folder)
     setEditFolderName(folder.name)
     setEditDialogOpen(true)
+  }
+
+  const handleDeleteFolder = (folder: Folder, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent folder click
+    deleteFolder(folder)
+  }
+
+  const handleFolderClick = (folder: Folder) => {
+    router.push(`/folders/view?id=${folder.id}`)
   }
 
   if (loading) {
@@ -230,13 +243,20 @@ export default function FoldersPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {folders.map((folder) => (
-              <Card key={folder.id} className="hover:shadow-lg transition-shadow">
+              <Card 
+                key={folder.id} 
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:border-blue-300"
+                onClick={() => handleFolderClick(folder)}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
                       <Folder className="w-8 h-8 text-blue-600" />
-                      <div>
-                        <CardTitle className="text-lg">{folder.name}</CardTitle>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <CardTitle className="text-lg">{folder.name}</CardTitle>
+                          <ExternalLink className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                         <CardDescription className="flex items-center gap-1 mt-1">
                           <Calendar className="w-3 h-3" />
                           Created {formatRelativeDate(folder.created_at)}
@@ -248,17 +268,19 @@ export default function FoldersPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => openEditDialog(folder)}
+                        onClick={(e) => openEditDialog(folder, e)}
                         disabled={actionLoading}
+                        title="Edit folder"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => deleteFolder(folder)}
+                        onClick={(e) => handleDeleteFolder(folder, e)}
                         disabled={actionLoading}
                         className="text-red-600 hover:text-red-700"
+                        title="Delete folder"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -266,9 +288,15 @@ export default function FoldersPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600">
-                    ID: {folder.id}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    {/* <p className="text-sm text-gray-600">
+                      Folder ID: {folder.id.substring(0, 8)}...
+                    </p> */}
+                    <div className="flex items-center text-xs text-blue-600 font-medium">
+                      <span>View Assets</span>
+                      <ExternalLink className="w-3 h-3 ml-1" />
+                    </div>
+                  </div>
                   {folder.updated_at !== folder.created_at && (
                     <p className="text-xs text-gray-500 mt-1">
                       Updated {formatRelativeDate(folder.updated_at)}

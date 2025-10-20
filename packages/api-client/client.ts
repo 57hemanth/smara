@@ -115,6 +115,28 @@ export interface FolderResponse {
   folder: Folder;
 }
 
+export interface Asset {
+  id: string;
+  user_id: string;
+  folder_id: string;
+  r2_key: string;
+  mime: string;
+  modality: 'image' | 'audio' | 'video' | 'text' | 'link';
+  bytes: number;
+  sha256: string;
+  source?: 'web' | 'extension';
+  source_url?: string;
+  status: 'pending' | 'processing' | 'ready' | 'error';
+  created_at: string;
+  updated_at: string;
+  preview?: string;
+}
+
+export interface AssetsResponse {
+  success: boolean;
+  assets: Asset[];
+}
+
 /**
  * API Client for SMARA backend
  */
@@ -427,6 +449,35 @@ export class SmaraApiClient {
       const error = await response.json().catch(() => ({ error: 'Failed to delete folder' }));
       throw new Error(error.error || `Failed to delete folder: ${response.status}`);
     }
+  }
+
+  /**
+   * Get all assets for a specific folder
+   */
+  async getFolderAssets(folderId: string, limit?: number, offset?: number): Promise<Asset[]> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const url = new URL(`${this.baseUrl}/folders/${folderId}/assets`);
+    if (limit) url.searchParams.set('limit', limit.toString());
+    if (offset) url.searchParams.set('offset', offset.toString());
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': this.userId,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to fetch folder assets' }));
+      throw new Error(error.error || `Failed to fetch folder assets: ${response.status}`);
+    }
+
+    const data: AssetsResponse = await response.json();
+    return data.assets;
   }
 }
 
