@@ -9,7 +9,7 @@ export interface Env {
 interface AudioIngestMessage {
     asset_id: string;
     user_id: string;
-    workspace_id: string;
+    folder_id: string;
     r2_key: string;
     source_r2_key?: string;  // Original video/asset r2_key for display
     modality: string;
@@ -19,7 +19,7 @@ interface AudioIngestMessage {
 interface EmbeddingMessage {
     text: string;
     user_id: string;
-    workspace_id: string;
+    folder_id: string;
     asset_id: string;
     r2_key: string;
     source_r2_key?: string;  // Original asset r2_key for search results
@@ -87,7 +87,7 @@ export default {
                 const embeddingMessage: EmbeddingMessage = {
                     text: transcription,
                     user_id: body.user_id,
-                    workspace_id: body.workspace_id,
+                    folder_id: body.folder_id,
                     asset_id: body.asset_id,
                     r2_key: body.source_r2_key || body.r2_key,
                     source_r2_key: body.source_r2_key,

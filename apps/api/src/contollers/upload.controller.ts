@@ -2,7 +2,7 @@ import { Context } from "hono";
 import { sanitizePathSegment, extFromType, modalityFromType } from "../utils/r2.utils";
 import { nanoid } from "nanoid";
 import type { Env, Variables } from "../types/env";
-import { createDbClient, WorkspaceRepository, AssetRepository } from "@smara/database";
+import { createDbClient, FolderRepository, AssetRepository } from "@smara/database";
 
 /**
  * YouTube URL validation utilities
@@ -43,25 +43,25 @@ function getYoutubeVideoId(url: string): string | null {
 
 class UploadController {
   /**
-   * Helper to get or create workspace for user by name
+   * Helper to get or create folder for user by name
    */
-  private static async getOrCreateWorkspace(db: any, userId: string, workspaceName: string = 'My Workspace'): Promise<string> {
-    const workspaceRepo = new WorkspaceRepository(db);
+  private static async getOrCreateFolder(db: any, userId: string, folderName: string = 'My Folder'): Promise<string> {
+    const folderRepo = new FolderRepository(db);
     
-    // Try to find existing workspace by name
-    const existingWorkspace = await workspaceRepo.findByUserIdAndName(userId, workspaceName);
-    if (existingWorkspace) {
-      return existingWorkspace.id;
+    // Try to find existing folder by name
+    const existingFolder = await folderRepo.findByUserIdAndName(userId, folderName);
+    if (existingFolder) {
+      return existingFolder.id;
     }
     
-    // Create new workspace with specified name
-    const workspace = await workspaceRepo.create({
+    // Create new folder with specified name
+    const folder = await folderRepo.create({
       id: nanoid(),
-      name: workspaceName,
+      name: folderName,
       user_id: userId,
     });
     
-    return workspace.id;
+    return folder.id;
   }
 
   /**
@@ -76,7 +76,7 @@ class UploadController {
   static async upload(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
-      const workspaceName = c.req.header('X-Workspace') || 'My Workspace';
+      const folderName = c.req.header('X-Folder') || 'My Folder';
   
       const contentType = c.req.header('content-type') || 'application/octet-stream';
       const contentLengthStr = c.req.header('content-length');
@@ -138,8 +138,8 @@ class UploadController {
       const db = createDbClient(c.env.DB);
       const assetRepo = new AssetRepository(db);
 
-      // Get or create workspace by name
-      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId, workspaceName);
+      // Get or create folder by name
+      const folderId = await UploadController.getOrCreateFolder(db, userId, folderName);
 
       // Check for duplicate (same hash for same user)
       const existingAsset = await assetRepo.findBySha256(sha256, userId);
@@ -178,7 +178,7 @@ class UploadController {
       await assetRepo.create({
         id,
         user_id: userId,
-        workspace_id: workspaceId,
+        folder_id: folderId,
         r2_key: key,
         mime: contentType,
         modality,
@@ -188,11 +188,11 @@ class UploadController {
         status: 'pending',
       });
 
-      // Publish to queue with workspace_id
+      // Publish to queue with folder_id
       await c.env.INGEST_QUEUE.send({ 
         r2_key: key, 
         user_id: userId, 
-        workspace_id: workspaceId,
+        folder_id: folderId,
         mime: contentType, 
         modality: modality, 
         asset_id: id 
@@ -218,7 +218,7 @@ class UploadController {
   static async uploadUrl(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const userId = (c.req.header('X-User-Id') || 'anon').replace(/[^a-zA-Z0-9_-]/g, '');
-      const workspaceName = c.req.header('X-Workspace') || 'My Workspace';
+      const folderName = c.req.header('X-Folder') || 'My Folder';
       
       // Parse request body
       const body = await c.req.json();
@@ -263,8 +263,8 @@ class UploadController {
       const db = createDbClient(c.env.DB);
       const assetRepo = new AssetRepository(db);
 
-      // Get or create workspace by name
-      const workspaceId = await UploadController.getOrCreateWorkspace(db, userId, workspaceName);
+      // Get or create folder by name
+      const folderId = await UploadController.getOrCreateFolder(db, userId, folderName);
 
       // Check for duplicate URL
       const existingAsset = await assetRepo.findBySha256(sha256, userId);
@@ -296,7 +296,7 @@ class UploadController {
       await assetRepo.create({
         id,
         user_id: userId,
-        workspace_id: workspaceId,
+        folder_id: folderId,
         r2_key: key,
         mime: 'application/json',
         modality: 'link',
@@ -307,11 +307,11 @@ class UploadController {
         status: 'pending',
       });
 
-      // Publish to queue with link modality and workspace_id
+      // Publish to queue with link modality and folder_id
       await c.env.INGEST_QUEUE.send({ 
         r2_key: key, 
         user_id: userId, 
-        workspace_id: workspaceId,
+        folder_id: folderId,
         mime: 'application/json', 
         modality: 'link',
         asset_id: id,

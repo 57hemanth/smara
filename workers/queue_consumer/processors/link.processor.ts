@@ -12,7 +12,7 @@ export async function processLinkMessage(message: IngestMessage, env: Env): Prom
     await env.LINK_INGEST_QUEUE.send({
         asset_id: message.asset_id,
         user_id: message.user_id,
-        workspace_id: message.workspace_id,
+        folder_id: message.folder_id,
         r2_key: message.r2_key,
         modality: message.modality,
         mime: message.mime,

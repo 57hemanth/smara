@@ -35,7 +35,7 @@ export default {
       try {
         // Get a unique container per asset for parallel processing
         const payload = typeof msg.body === 'string' ? JSON.parse(msg.body) : msg.body;
-        const { asset_id, user_id, workspace_id, r2_key, mime } = payload;
+        const { asset_id, user_id, folder_id, r2_key, mime } = payload;
         
         // Each video gets its own container instance (up to max_instances limit)
         const container = env.VIDEO_CONTAINER.getByName(asset_id);
@@ -104,7 +104,7 @@ export default {
           await env.IMAGE_QUEUE.send({
             asset_id,  // Original video asset_id
             user_id,
-            workspace_id,
+            folder_id,
             r2_key: frameR2Key,  // Frame location (for processing)
             source_r2_key: r2_key,  // Original video location (for display)
             modality: 'video',  // Set as video so frontend knows to display video player
@@ -135,7 +135,7 @@ export default {
           await env.AUDIO_QUEUE.send({
             asset_id,  // Original video asset_id
             user_id,
-            workspace_id,
+            folder_id,
             r2_key: audioR2Key,  // Audio location (for processing)
             source_r2_key: r2_key,  // Original video location (for display)
             modality: 'video',  // Set as video so frontend knows to display video player

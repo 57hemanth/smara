@@ -76,12 +76,12 @@ export interface ApiClientOptions {
 
 export interface UploadOptions {
   prefix?: string;
-  workspace?: string;
+  folder?: string;
   onProgress?: (progress: number) => void;
 }
 
 export interface UrlUploadOptions {
-  workspace?: string;
+  folder?: string;
 }
 
 export interface SearchOptions {
@@ -129,9 +129,9 @@ export class SmaraApiClient {
       headers['X-User-Id'] = this.userId;
     }
 
-    // Add workspace if specified
-    if (options?.workspace) {
-      headers['X-Workspace'] = options.workspace;
+    // Add folder if specified
+    if (options?.folder) {
+      headers['X-Folder'] = options.folder;
     }
 
     // Build URL with optional prefix
@@ -168,9 +168,9 @@ export class SmaraApiClient {
       headers['X-User-Id'] = this.userId;
     }
 
-    // Add workspace if specified
-    if (options?.workspace) {
-      headers['X-Workspace'] = options.workspace;
+    // Add folder if specified
+    if (options?.folder) {
+      headers['X-Folder'] = options.folder;
     }
 
     const response = await fetch(`${this.baseUrl}/upload/url`, {

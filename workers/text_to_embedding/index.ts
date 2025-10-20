@@ -8,7 +8,7 @@ export interface Env {
 interface EmbeddingMessage {
     text: string;
     user_id: string;
-    workspace_id: string;
+    folder_id: string;
     asset_id: string;
     r2_key: string;
     source_r2_key?: string;  // Original asset r2_key for search results
@@ -40,14 +40,14 @@ export default {
                     continue;
                 }
 
-                if (!body.user_id || !body.asset_id || !body.workspace_id) {
-                    console.error(`Message ${message.id}: Missing required fields (user_id, asset_id, or workspace_id)`);
+                if (!body.user_id || !body.asset_id || !body.folder_id) {
+                    console.error(`Message ${message.id}: Missing required fields (user_id, asset_id, or folder_id)`);
                     console.error(`Received body:`, JSON.stringify(body, null, 2));
                     message.retry();
                     continue;
                 }
 
-                console.log(`Processing embedding for asset: ${body.asset_id}, modality: ${body.modality}, workspace_id: ${body.workspace_id}`);
+                console.log(`Processing embedding for asset: ${body.asset_id}, modality: ${body.modality}, folder_id: ${body.folder_id}`);
 
                 const aiRes = await env.AI.run(
                     MODEL,
@@ -69,7 +69,7 @@ export default {
 
                 const metadata = {
                     user_id: body.user_id,
-                    workspace_id: body.workspace_id,
+                    folder_id: body.folder_id,
                     asset_id: body.asset_id,
                     modality: body.modality,
                     date: new Date().toISOString(),

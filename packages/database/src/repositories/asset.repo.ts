@@ -21,9 +21,9 @@ export class AssetRepository {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string, limit: number = 100, offset: number = 0): Promise<Asset[]> {
+  async findByFolderId(folderId: string, limit: number = 100, offset: number = 0): Promise<Asset[]> {
     return await this.db.query.assets.findMany({
-      where: eq(assets.workspace_id, workspaceId),
+      where: eq(assets.folder_id, folderId),
       limit,
       offset,
       orderBy: [desc(assets.created_at)],

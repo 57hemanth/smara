@@ -11,7 +11,7 @@ export interface Env {
 export interface VideoProcessPayload {
     asset_id: string;
     user_id: string;
-    workspace_id: string;
+    folder_id: string;
     r2_key: string;
     mime: string;
 }

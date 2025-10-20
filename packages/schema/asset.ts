@@ -3,7 +3,7 @@ import { z } from "zod";
 export const assetSchema = z.object({
     id: z.string(),
     user_id: z.string(),
-    workspace_id: z.string(),
+    folder_id: z.string(),
     url: z.string(),
     r2_key: z.string(),
     mime: z.string(),

@@ -1,16 +1,16 @@
 import { sqliteTable, text, integer, primaryKey } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 import { users } from './users';
-import { workspaces } from './workspaces';
+import { folders } from './folders';
 
 export const assets = sqliteTable('assets', {
   id: text('id').primaryKey(),
   user_id: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  workspace_id: text('workspace_id')
+  folder_id: text('folder_id')
     .notNull()
-    .references(() => workspaces.id, { onDelete: 'cascade' }),
+    .references(() => folders.id, { onDelete: 'cascade' }),
   r2_key: text('r2_key').notNull(),
   mime: text('mime').notNull(),
   modality: text('modality', { 
