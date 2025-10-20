@@ -63,8 +63,8 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       localStorage.setItem("smara_user_id", response.user.id)
       localStorage.setItem("smara_user", JSON.stringify(response.user))
 
-      // Redirect to upload page
-      router.push("/upload")
+      // Redirect to search page
+      router.push("/search")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create account")
     } finally {
