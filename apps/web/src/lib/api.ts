@@ -17,5 +17,10 @@ export type {
   SearchResult, 
   HealthCheckResult,
   UploadOptions,
-  SearchOptions
+  SearchOptions,
+  Folder,
+  CreateFolderRequest,
+  UpdateFolderRequest,
+  FoldersResponse,
+  FolderResponse,
 } from '@smara/api-client';

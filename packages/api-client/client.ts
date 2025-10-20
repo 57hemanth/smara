@@ -89,6 +89,32 @@ export interface SearchOptions {
   limit?: number;
 }
 
+export interface Folder {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateFolderRequest {
+  name: string;
+}
+
+export interface UpdateFolderRequest {
+  name: string;
+}
+
+export interface FoldersResponse {
+  success: boolean;
+  folders: Folder[];
+}
+
+export interface FolderResponse {
+  success: boolean;
+  folder: Folder;
+}
+
 /**
  * API Client for SMARA backend
  */
@@ -303,6 +329,105 @@ export class SmaraApiClient {
 
     return await response.json();
   }
+
+  /**
+   * Get all folders for the authenticated user
+   */
+  async getFolders(): Promise<Folder[]> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const response = await fetch(`${this.baseUrl}/folders`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': this.userId,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to fetch folders' }));
+      throw new Error(error.error || `Failed to fetch folders: ${response.status}`);
+    }
+
+    const data: FoldersResponse = await response.json();
+    return data.folders;
+  }
+
+  /**
+   * Create a new folder
+   */
+  async createFolder(data: CreateFolderRequest): Promise<Folder> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const response = await fetch(`${this.baseUrl}/folders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': this.userId,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to create folder' }));
+      throw new Error(error.error || `Failed to create folder: ${response.status}`);
+    }
+
+    const result: FolderResponse = await response.json();
+    return result.folder;
+  }
+
+  /**
+   * Update a folder (rename)
+   */
+  async updateFolder(folderId: string, data: UpdateFolderRequest): Promise<Folder> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const response = await fetch(`${this.baseUrl}/folders/${folderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': this.userId,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to update folder' }));
+      throw new Error(error.error || `Failed to update folder: ${response.status}`);
+    }
+
+    const result: FolderResponse = await response.json();
+    return result.folder;
+  }
+
+  /**
+   * Delete a folder
+   */
+  async deleteFolder(folderId: string): Promise<void> {
+    if (!this.userId) {
+      throw new Error('User ID not set. Please authenticate first.');
+    }
+
+    const response = await fetch(`${this.baseUrl}/folders/${folderId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': this.userId,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Failed to delete folder' }));
+      throw new Error(error.error || `Failed to delete folder: ${response.status}`);
+    }
+  }
 }
 
 /**
@@ -311,4 +436,3 @@ export class SmaraApiClient {
 export function createApiClient(options?: ApiClientOptions): SmaraApiClient {
   return new SmaraApiClient(options);
 }
-

@@ -104,9 +104,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Folders Section - Can be expanded later */}
+        {/* Folders Section */}
         <SidebarGroup>
-          <SidebarGroupLabel>Folders</SidebarGroupLabel>
+          <div className="flex items-center justify-between px-2">
+            <SidebarGroupLabel>Folders</SidebarGroupLabel>
+            <Link href="/folders" className="text-xs text-blue-600 hover:text-blue-700 hover:underline">
+              View All
+            </Link>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>

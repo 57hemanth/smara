@@ -13,5 +13,10 @@ export {
   type ApiClientOptions,
   type UploadOptions,
   type SearchOptions,
+  type Folder,
+  type CreateFolderRequest,
+  type UpdateFolderRequest,
+  type FoldersResponse,
+  type FolderResponse,
 } from './client';
 
