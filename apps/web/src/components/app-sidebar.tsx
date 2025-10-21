@@ -108,7 +108,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         {/* Folders Section */}
         <SidebarGroup>
-          <div className="flex items-center justify-between px-2">
+          <div className="flex items-center justify-between pr-1">
             <SidebarGroupLabel>Folders</SidebarGroupLabel>
             <Link href="/folders" className="text-xs text-primary hover:text-primary/80 hover:underline">
               View All
