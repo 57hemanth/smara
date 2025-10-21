@@ -59,6 +59,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
+  const isRouteActive = (url: string) => pathname === url || pathname.startsWith(url + "/")
+  const isFoldersActive = isRouteActive("/folders")
 
   const handleLogout = () => {
     localStorage.removeItem("smara_user_id")
@@ -88,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {data.navMain.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.url
+                const isActive = isRouteActive(item.url)
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive}>
@@ -115,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={isFoldersActive}>
                   <Link href="/folders" className="flex items-center gap-2">
                     <Folder className="w-4 h-4" />
                     <span>My Folder</span>
@@ -132,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {data.navSecondary.map((item) => {
                 const Icon = item.icon
-                const isActive = pathname === item.url
+                const isActive = isRouteActive(item.url)
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive}>
