@@ -7,7 +7,7 @@ const CanvasLoadingSkeleton = () => {
   return (
     <div className="w-full h-screen flex items-center justify-center bg-gray-50">
       <div className="flex items-center gap-3 text-gray-600">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
         <p>Loading assets...</p>
       </div>
     </div>

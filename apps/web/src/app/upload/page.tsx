@@ -129,8 +129,8 @@ export default function UploadPage() {
               onClick={() => handleModeChange('file')}
               className={`flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all ${
                 mode === 'file'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-background text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               📁 Upload File
@@ -139,8 +139,8 @@ export default function UploadPage() {
               onClick={() => handleModeChange('url')}
               className={`flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all ${
                 mode === 'url'
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-background text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               🔗 YouTube URL

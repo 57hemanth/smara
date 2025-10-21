@@ -179,7 +179,7 @@ export function UploadComponent({
             <input
               type="file"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="block w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-secondary file:text-primary hover:file:bg-accent"
               disabled={uploading}
             />
           </div>
@@ -187,7 +187,7 @@ export function UploadComponent({
           <button
             onClick={handleFileUpload}
             disabled={!file || !userId.trim() || uploading}
-            className="w-full px-3 py-2 text-xs rounded bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-3 py-2 text-xs rounded bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {uploading ? "Uploading..." : "Upload"}
           </button>
@@ -217,7 +217,7 @@ export function UploadComponent({
             {currentUrl && isYoutubeUrl(currentUrl) && url !== currentUrl && (
               <button
                 onClick={() => setUrl(currentUrl)}
-                className="text-xs text-blue-600 hover:underline"
+                className="text-xs text-primary hover:underline"
               >
                 Use current page URL
               </button>
@@ -227,7 +227,7 @@ export function UploadComponent({
           <button
             onClick={handleUrlUpload}
             disabled={!url.trim() || !userId.trim() || uploading}
-            className="w-full px-3 py-2 text-xs rounded bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-3 py-2 text-xs rounded bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {uploading ? "Processing..." : "Capture YouTube"}
           </button>
@@ -240,7 +240,7 @@ export function UploadComponent({
             ? "bg-red-50 text-red-700 border border-red-200" 
             : status.includes("✅")
             ? "bg-green-50 text-green-700 border border-green-200"
-            : "bg-blue-50 text-blue-700 border border-blue-200"
+            : "bg-accent text-accent-foreground border border-accent"
         }`}>
           {status}
         </div>

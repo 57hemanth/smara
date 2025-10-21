@@ -36,13 +36,13 @@ const getModalityIcon = (modality: string) => {
 export function SearchResultCard({ result, index }: SearchResultCardProps) {
   return (
     <Card
-      className="p-6 hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-blue-300 animate-in fade-in slide-in-from-bottom-2"
+      className="p-6 hover:shadow-lg transition-all duration-300 border border-border hover:border-accent animate-in fade-in slide-in-from-bottom-2"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 text-sm font-medium">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium">
             {getModalityIcon(result.modality)}
             <span className="capitalize">{result.modality}</span>
           </div>
@@ -88,7 +88,7 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
 
         {/* Expandable Details */}
         <details className="group">
-          <summary className="cursor-pointer text-blue-600 hover:text-blue-700 text-xs font-medium">
+          <summary className="cursor-pointer text-primary hover:text-primary/80 text-xs font-medium">
             View details
           </summary>
           <div className="mt-3 p-4 bg-gray-50 rounded-lg space-y-2 text-xs">
@@ -109,7 +109,7 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
             {result.preview && (
               <div>
                 <a 
-                  className="text-blue-600 hover:underline inline-flex items-center gap-1" 
+                  className="text-primary hover:underline inline-flex items-center gap-1" 
                   href={result.preview} 
                   target="_blank" 
                   rel="noreferrer"

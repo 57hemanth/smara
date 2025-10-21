@@ -11,7 +11,7 @@ export function StatusMessage({ message }: StatusMessageProps) {
     } else if (message.includes("✅")) {
       return "bg-green-50 text-green-700 border border-green-200"
     } else {
-      return "bg-blue-50 text-blue-700 border border-blue-200"
+      return "bg-accent text-accent-foreground border border-accent"
     }
   }
 

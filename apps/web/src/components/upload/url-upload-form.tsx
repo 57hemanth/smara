@@ -50,7 +50,7 @@ export function UrlUploadForm({
       <Button
         onClick={onUpload}
         disabled={!url.trim() || uploading}
-        className="w-full h-11 bg-blue-600 hover:bg-blue-700"
+        className="w-full h-11 bg-primary hover:bg-primary/90"
       >
         {uploading ? (
           <span className="flex items-center gap-2">

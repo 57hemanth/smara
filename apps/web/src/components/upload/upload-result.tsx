@@ -20,7 +20,7 @@ export function UploadResult({ uploadedKey, publicUrl }: UploadResultProps) {
         <div>
           <span className="font-medium text-gray-900">Public URL:</span>{" "}
           <a 
-            className="text-blue-600 hover:underline break-all" 
+            className="text-primary hover:underline break-all" 
             href={publicUrl} 
             target="_blank" 
             rel="noreferrer"

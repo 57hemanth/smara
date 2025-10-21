@@ -55,7 +55,7 @@ export function PageLayout({
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 {title && (
                   <div className="flex items-center gap-2">
-                    {Icon && <Icon className="w-5 h-5 text-blue-600" />}
+                    {Icon && <Icon className="w-5 h-5 text-primary" />}
                     <h1 className="text-lg font-semibold">{title}</h1>
                   </div>
                 )}

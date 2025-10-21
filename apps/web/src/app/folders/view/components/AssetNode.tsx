@@ -39,7 +39,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'ready': return 'bg-green-100 text-green-800 border-green-200'
     case 'processing': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-    case 'pending': return 'bg-blue-100 text-blue-800 border-blue-200'
+    case 'pending': return 'bg-accent text-accent-foreground border-accent'
     case 'error': return 'bg-red-100 text-red-800 border-red-200'
     default: return 'bg-gray-100 text-gray-800 border-gray-200'
   }
@@ -128,14 +128,14 @@ export const AssetNode = memo<NodeProps<AssetNodeData>>(({ data }) => {
       <Handle
         type="target"
         position={Position.Top}
-        className="!bg-blue-500 !w-2 !h-2 !border-white !border-2"
+        className="!bg-primary !w-2 !h-2 !border-white !border-2"
       />
       
-      <Card className="w-64 shadow-lg hover:shadow-xl transition-shadow duration-200 border-2 hover:border-blue-300">
+      <Card className="w-64 shadow-lg hover:shadow-xl transition-shadow duration-200 border-2 hover:border-accent">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {getModalityIcon(asset.modality, "w-5 h-5 text-blue-600")}
+              {getModalityIcon(asset.modality, "w-5 h-5 text-primary")}
               <span className="font-medium text-sm text-gray-900">{shortName}</span>
             </div>
             {/* <Badge className={`text-xs ${getStatusColor(asset.status)}`}>
@@ -201,7 +201,7 @@ export const AssetNode = memo<NodeProps<AssetNodeData>>(({ data }) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        className="!bg-blue-500 !w-2 !h-2 !border-white !border-2"
+        className="!bg-primary !w-2 !h-2 !border-white !border-2"
       />
     </div>
   )

@@ -29,14 +29,14 @@ export function SearchInput({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search your content..."
-            className="pl-10 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+            className="pl-10 h-12 text-base border-border focus:border-primary focus:ring-primary"
             disabled={loading}
           />
         </div>
         <Button 
           type="submit"
           disabled={!query.trim() || loading}
-          className="h-12 px-6 bg-blue-600 hover:bg-blue-700"
+          className="h-12 px-6 bg-primary hover:bg-primary/90"
         >
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -55,13 +55,13 @@ export function SearchInput({
       className="space-y-4 w-full max-w-2xl"
     >
       <div className="relative group">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 transition-colors group-focus-within:text-blue-600" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground transition-colors group-focus-within:text-primary" />
         <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="What are you looking for?"
-          className="pl-14 h-16 text-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-2xl shadow-sm hover:shadow-md transition-all"
+          className="pl-14 h-16 text-lg border-2 border-border focus:border-primary focus:ring-2 focus:ring-accent rounded-2xl shadow-sm hover:shadow-md transition-all"
           disabled={loading}
           autoFocus
         />

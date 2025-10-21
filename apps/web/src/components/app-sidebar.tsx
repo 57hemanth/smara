@@ -70,12 +70,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
-          <Sparkles className="w-6 h-6 text-blue-600" />
+          <Sparkles className="w-6 h-6 text-primary" />
           <div className="flex flex-col">
-            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               SMARA
             </span>
-            <span className="text-xs text-gray-500">AI-Powered Search</span>
+            <span className="text-xs text-muted-foreground">AI-Powered Search</span>
           </div>
         </div>
       </SidebarHeader>
@@ -108,7 +108,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <div className="flex items-center justify-between px-2">
             <SidebarGroupLabel>Folders</SidebarGroupLabel>
-            <Link href="/folders" className="text-xs text-blue-600 hover:text-blue-700 hover:underline">
+            <Link href="/folders" className="text-xs text-primary hover:text-primary/80 hover:underline">
               View All
             </Link>
           </div>

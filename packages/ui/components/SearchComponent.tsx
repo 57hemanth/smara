@@ -68,7 +68,7 @@ export function SearchComponent({ userId, onSearch }: SearchComponentProps) {
       <button
         onClick={handleSearch}
         disabled={!query.trim() || !userId.trim() || loading}
-        className="w-full px-3 py-2 text-xs rounded bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full px-3 py-2 text-xs rounded bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? "Searching..." : "Search"}
       </button>
@@ -79,7 +79,7 @@ export function SearchComponent({ userId, onSearch }: SearchComponentProps) {
             ? "bg-red-50 text-red-700 border border-red-200" 
             : status.includes("✅")
             ? "bg-green-50 text-green-700 border border-green-200"
-            : "bg-blue-50 text-blue-700 border border-blue-200"
+            : "bg-accent text-accent-foreground border border-accent"
         }`}>
           {status}
         </div>
@@ -91,7 +91,7 @@ export function SearchComponent({ userId, onSearch }: SearchComponentProps) {
           {results.map((result, index) => (
             <div key={result.assetId + index} className="p-2 bg-gray-50 rounded border space-y-1">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-accent text-accent-foreground">
                   {result.modality}
                 </span>
                 <span className="text-xs text-gray-600">

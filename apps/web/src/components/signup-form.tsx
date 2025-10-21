@@ -150,7 +150,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login" className="text-blue-600 hover:underline">Sign in</a>
+                  Already have an account? <a href="/login" className="text-primary hover:underline">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

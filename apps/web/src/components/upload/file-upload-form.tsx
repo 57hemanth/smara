@@ -36,7 +36,7 @@ export function FileUploadForm({
       <Button
         onClick={onUpload}
         disabled={!file || uploading}
-        className="w-full h-11 bg-blue-600 hover:bg-blue-700"
+        className="w-full h-11 bg-primary hover:bg-primary/90"
       >
         {uploading ? (
           <span className="flex items-center gap-2">

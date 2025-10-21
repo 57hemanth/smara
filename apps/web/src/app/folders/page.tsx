@@ -156,7 +156,7 @@ export default function FoldersPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading folders...</p>
         </div>
       </div>
@@ -245,13 +245,13 @@ export default function FoldersPage() {
             {folders.map((folder) => (
               <Card 
                 key={folder.id} 
-                className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:border-blue-300"
+                className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02] hover:border-accent"
                 onClick={() => handleFolderClick(folder)}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <Folder className="w-8 h-8 text-blue-600" />
+                      <Folder className="w-8 h-8 text-primary" />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <CardTitle className="text-lg">{folder.name}</CardTitle>
@@ -292,7 +292,7 @@ export default function FoldersPage() {
                     {/* <p className="text-sm text-gray-600">
                       Folder ID: {folder.id.substring(0, 8)}...
                     </p> */}
-                    <div className="flex items-center text-xs text-blue-600 font-medium">
+                    <div className="flex items-center text-xs text-primary font-medium">
                       <span>View Assets</span>
                       <ExternalLink className="w-3 h-3 ml-1" />
                     </div>
