@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
+import { apiClient, FoldersResponse } from "@/lib/api"
 import { 
   Search, 
   Upload, 
@@ -28,6 +29,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
 
 // Navigation items for SMARA
 const data = {
@@ -60,13 +62,32 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const isRouteActive = (url: string) => pathname === url || pathname.startsWith(url + "/")
-  const isFoldersActive = isRouteActive("/folders")
+  const searchParams = useSearchParams()
+  const activeFolderId = searchParams.get("id")
+  const [foldersResponse, setFoldersResponse] = useState<FoldersResponse>({
+    success: false,
+    folders: []
+  })
 
   const handleLogout = () => {
     localStorage.removeItem("smara_user_id")
     localStorage.removeItem("smara_token")
     window.location.href = "/login"
   }
+
+  const getFolders = async () => {
+    const response = await apiClient.getFolders()
+    console.log('response')
+    console.log(response)
+    setFoldersResponse({
+      success: true,
+      folders: response
+    })
+  }
+
+  useEffect(() => {
+    getFolders()
+  }, [])
 
   return (
     <Sidebar {...props}>
@@ -116,14 +137,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={isFoldersActive}>
-                  <Link href="/folders" className="flex items-center gap-2">
-                    <Folder className="w-4 h-4" />
-                    <span>My Folder</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {foldersResponse.folders.length > 0 ? (
+                foldersResponse.folders.map((folder) => {
+                  const isActive = pathname.startsWith("/folders/view") && activeFolderId === folder.id
+                  return (
+                    <SidebarMenuItem key={folder.id}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link href={`/folders/view/?id=${folder.id}`} className="flex items-center gap-2">
+                          <Folder className="w-4 h-4" />
+                          <span>{folder.name}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })
+              ) : (
+                <SidebarMenuItem>
+                  <SidebarMenuButton>
+                    <div className="flex items-center gap-2">
+                      <Folder className="w-4 h-4" />
+                      <span>No folders yet</span>
+                    </div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
