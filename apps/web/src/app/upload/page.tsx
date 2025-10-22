@@ -38,7 +38,7 @@ export default function UploadPage() {
     }
 
     if (!isYoutubeUrl(url)) {
-      setUrlError("Only YouTube URLs are supported");
+      setUrlError("Only YouTube URLs are supported for now.");
       return false;
     }
 
@@ -143,7 +143,7 @@ export default function UploadPage() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              🔗 YouTube URL
+              🔗 URL
             </button>
           </div>
 
@@ -178,14 +178,6 @@ export default function UploadPage() {
               publicUrl={publicUrl} 
             />
           )}
-
-          {/* Info Note */}
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-xs text-yellow-800">
-              <strong>Note:</strong> {mode === 'file' ? 'File uploads' : 'YouTube URLs'} are handled by the Hono API backend. 
-              Make sure <code className="bg-yellow-100 px-1 py-0.5 rounded">apps/api</code> is running on port 8787.
-            </p>
-          </div>
         </div>
       </div>
     </PageLayout>

@@ -25,7 +25,7 @@ export function UrlUploadForm({
     <>
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-900">
-          YouTube URL
+          Add URL
         </label>
         <Input
           type="url"
@@ -34,7 +34,7 @@ export function UrlUploadForm({
             setUrl(e.target.value)
             setUrlError("")
           }}
-          placeholder="https://www.youtube.com/watch?v=..."
+          placeholder="https://example.com/download/video.mp4"
           className={`h-11 ${
             urlError ? 'border-red-300 focus:border-red-500' : ''
           }`}
@@ -43,7 +43,7 @@ export function UrlUploadForm({
           <p className="text-sm text-red-600">{urlError}</p>
         )}
         <p className="text-xs text-gray-500">
-          Paste a YouTube video URL. The transcript will be extracted and made searchable.
+          Paste any public URL. We will make it searchable.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export function UrlUploadForm({
         ) : (
           <span className="flex items-center gap-2">
             <UploadIcon className="w-4 h-4" />
-            Process YouTube URL
+            Process URL
           </span>
         )}
       </Button>
