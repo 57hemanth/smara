@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { apiClient } from "@/lib/api";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Search, FileText, Image, Music, Video } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { PageLayout } from "@/components/layout";
@@ -68,73 +68,97 @@ export default function SearchPage() {
       showHeader={hasSearched}
       headerContent={searchHeader}
     >
-      {!hasSearched ? (
-        /* Initial Centered Search */
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-6">
-          <div className="w-full max-w-2xl space-y-8">
-            {/* Logo/Title */}
-            <div className="text-center space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Sparkles className="w-8 h-8 text-primary" />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  SMARA Search
-                </h1>
-              </div>
-              <p className="text-gray-600 text-lg">
-                Search your images, videos, audio, and documents
-              </p>
-            </div>
-
-            {/* Search Form */}
-            <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-              <SearchInput 
-                query={query}
-                setQuery={setQuery}
-                loading={loading}
-                onSearch={handleSearch}
-                variant="centered"
-              />
-            </div>
-
-            {/* Quick Tips */}
-            <div className="text-center text-sm text-gray-500 animate-in fade-in duration-1000 delay-300">
-              <p>Try: "mountain sunset" • "jazz music" • "project presentation"</p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        /* Results Section */
-        <div className="p-6 max-w-6xl mx-auto w-full">
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                <p className="text-gray-600">Searching through your content...</p>
-              </div>
-            ) : results.length > 0 ? (
-              <>
-                <div className="flex items-center justify-between py-4">
-                  <h2 className="text-lg text-gray-700">
-                    Found <span className="font-semibold text-gray-900">{results.length}</span> results
-                  </h2>
+      {/* Background */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+        {!hasSearched ? (
+          /* Initial Centered Search */
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] px-6">
+            <div className="w-full max-w-3xl space-y-10">
+              {/* Header Section */}
+              <div className="text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                <div className="space-y-4">
+                  <h1 className="text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
+                    Search Everything
+                  </h1>
+                  <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    Find your images, videos, audio files, and documents instantly
+                  </p>
                 </div>
+              </div>
 
-                <div className="grid gap-4">
-                  {results.map((result, index) => (
-                    <SearchResultCard 
-                      key={result.assetId + index} 
-                      result={result} 
-                      index={index} 
-                    />
+              {/* Search Form */}
+              <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+                <SearchInput 
+                  query={query}
+                  setQuery={setQuery}
+                  loading={loading}
+                  onSearch={handleSearch}
+                  variant="centered"
+                />
+              </div>
+
+              {/* Quick Examples */}
+              <div className="text-center animate-in fade-in duration-1000 delay-400">
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">Popular searches:</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {[
+                    "vacation photos",
+                    "meeting recordings", 
+                    "project documents",
+                    "san francisco"
+                  ].map((example) => (
+                    <button
+                      key={example}
+                      onClick={() => {
+                        setQuery(example);
+                        handleSearch();
+                      }}
+                      className="px-4 py-2 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-lg"
+                    >
+                      {example}
+                    </button>
                   ))}
                 </div>
-              </>
-            ) : (
-              <SearchEmptyState />
-            )}
+              </div>
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          /* Results Section */
+          <div className="p-6 max-w-7xl mx-auto">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                  <div className="w-8 h-8 border-2 border-slate-300 dark:border-slate-600 border-t-primary rounded-full animate-spin"></div>
+                  <p className="text-slate-600 dark:text-slate-400">Searching your content...</p>
+                </div>
+              ) : results.length > 0 ? (
+                <>
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
+                      Search Results
+                    </h2>
+                    <p className="text-slate-600 dark:text-slate-400 mt-1">
+                      Found {results.length} {results.length === 1 ? 'result' : 'results'} for "{query}"
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {results.map((result, index) => (
+                      <SearchResultCard 
+                        key={result.assetId + index} 
+                        result={result} 
+                        index={index} 
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <SearchEmptyState />
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </PageLayout>
   );
 }

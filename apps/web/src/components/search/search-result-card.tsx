@@ -1,7 +1,8 @@
 "use client"
 
-import { FileText, Image as ImageIcon, Music, Video, Link as LinkIcon } from "lucide-react"
+import { FileText, Image as ImageIcon, Music, Video, Link as LinkIcon, Download, Calendar } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { MediaPreview } from "@/components"
 
 interface SearchResult {
@@ -33,94 +34,70 @@ const getModalityIcon = (modality: string) => {
   }
 }
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
 export function SearchResultCard({ result, index }: SearchResultCardProps) {
   return (
     <Card
-      className="p-6 hover:shadow-lg transition-all duration-300 border border-border hover:border-accent animate-in fade-in slide-in-from-bottom-2"
+      className="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:border-slate-300 dark:hover:border-slate-600 animate-in fade-in slide-in-from-bottom-2"
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium">
-            {getModalityIcon(result.modality)}
-            <span className="capitalize">{result.modality}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium">
-            {(result.score * 100).toFixed(0)}% match
-          </div>
-        </div>
-      </div>
-
       {/* Preview */}
       {result.preview && (
-        <div className="mb-4 rounded-lg overflow-hidden bg-gray-50">
-          <MediaPreview url={result.preview} modality={result.modality} />
+        <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden mb-3">
+          <MediaPreview 
+            url={result.preview} 
+            modality={result.modality}
+            maxHeight="120px"
+            className="w-full h-full object-cover"
+          />
         </div>
       )}
 
-      {/* Content/Metadata */}
-      <div className="space-y-3 text-sm">
-        {result.metadata?.text && (
-          <div>
-            <p className="text-gray-700 leading-relaxed line-clamp-3">
-              {result.metadata.text}
-            </p>
+      {/* Content */}
+      {result.metadata?.text && (
+        <div className="mb-3">
+          <p className="text-slate-700 dark:text-slate-300 text-xs leading-relaxed line-clamp-2">
+            {result.metadata.text}
+          </p>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="space-y-2">
+        {result.metadata?.date && (
+          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+            <Calendar className="w-3 h-3" />
+            <span>{formatDate(result.metadata.date)}</span>
           </div>
         )}
-
-        <div className="flex flex-wrap gap-4 text-xs text-gray-500">
-          {result.metadata?.date && (
-            <div className="flex items-center gap-1">
-              <span>📅</span>
-              <span>{new Date(result.metadata.date).toLocaleDateString()}</span>
-            </div>
-          )}
-          {result.metadata?.folder_id && (
-            <div className="flex items-center gap-1">
-              <span>📁</span>
-              <span>Folder: {result.metadata.folder_id.slice(0, 8)}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Expandable Details */}
-        <details className="group">
-          <summary className="cursor-pointer text-primary hover:text-primary/80 text-xs font-medium">
-            View details
-          </summary>
-          <div className="mt-3 p-4 bg-gray-50 rounded-lg space-y-2 text-xs">
-            <div>
-              <span className="font-medium text-gray-700">Asset ID:</span>{" "}
-              <code className="bg-gray-200 px-2 py-1 rounded">
-                {result.assetId}
-              </code>
-            </div>
-            {result.metadata?.r2_key && (
-              <div>
-                <span className="font-medium text-gray-700">File:</span>{" "}
-                <code className="bg-gray-200 px-2 py-1 rounded break-all">
-                  {result.metadata.r2_key}
-                </code>
-              </div>
-            )}
-            {result.preview && (
-              <div>
-                <a 
-                  className="text-primary hover:underline inline-flex items-center gap-1" 
-                  href={result.preview} 
-                  target="_blank" 
-                  rel="noreferrer"
-                >
-                  <LinkIcon className="w-3 h-3" />
-                  Open in new tab
-                </a>
-              </div>
-            )}
-          </div>
-        </details>
+        
+        {result.preview && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full text-xs h-8"
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = result.preview!;
+              link.download = `asset-${result.assetId}`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+          >
+            <Download className="w-3 h-3 mr-1" />
+            Download
+          </Button>
+        )}
       </div>
     </Card>
   )

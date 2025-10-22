@@ -2,7 +2,6 @@
 
 import { Search, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 
 interface SearchInputProps {
   query: string
@@ -21,29 +20,21 @@ export function SearchInput({
 }: SearchInputProps) {
   if (variant === "compact") {
     return (
-      <form onSubmit={onSearch} className="flex items-center gap-3 w-full">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+      <form onSubmit={onSearch} className="w-full">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          {loading && (
+            <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 animate-spin" />
+          )}
           <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search your content..."
-            className="pl-10 h-12 text-base border-border focus:border-primary focus:ring-primary"
+            className="pl-12 pr-12 h-12 text-base bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-400"
             disabled={loading}
           />
         </div>
-        <Button 
-          type="submit"
-          disabled={!query.trim() || loading}
-          className="h-12 px-6 bg-primary hover:bg-primary/90"
-        >
-          {loading ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Search className="w-5 h-5" />
-          )}
-        </Button>
       </form>
     )
   }
@@ -52,38 +43,23 @@ export function SearchInput({
   return (
     <form 
       onSubmit={onSearch}
-      className="space-y-4 w-full max-w-2xl"
+      className="w-full"
     >
-      <div className="relative group">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground transition-colors group-focus-within:text-primary" />
+      <div className="relative">
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        {loading && (
+          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 animate-spin" />
+        )}
         <Input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="What are you looking for?"
-          className="pl-14 h-16 text-lg border-2 border-border focus:border-primary focus:ring-2 focus:ring-accent rounded-2xl shadow-sm hover:shadow-md transition-all"
+          placeholder="Search your content... (Press Enter)"
+          className="pl-12 pr-12 h-14 text-lg bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-400"
           disabled={loading}
           autoFocus
         />
       </div>
-
-      <Button 
-        type="submit"
-        disabled={!query.trim() || loading}
-        className="w-full h-14 text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl shadow-lg hover:shadow-xl transition-all"
-      >
-        {loading ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            Searching...
-          </span>
-        ) : (
-          <span className="flex items-center gap-2">
-            <Search className="w-5 h-5" />
-            Search
-          </span>
-        )}
-      </Button>
     </form>
   )
 }

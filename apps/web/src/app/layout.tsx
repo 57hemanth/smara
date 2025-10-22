@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   title: "Smara - Remember Everything, Effortlessly.",
   description: "Search, upload, and remember everything.",
   icons: {
-    icon: "./dark-logo.png",
+    icon: "/dark-logo.png",
+    shortcut: "/dark-logo.png",
+    apple: "/dark-logo.png",
   },
 };
 
