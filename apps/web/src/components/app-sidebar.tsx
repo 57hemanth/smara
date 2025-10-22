@@ -93,13 +93,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
-          <Sparkles className="w-6 h-6 text-primary" />
-          <div className="flex flex-col">
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              SMARA
-            </span>
-            <span className="text-xs text-muted-foreground">AI-Powered Search</span>
-          </div>
+          <img src="/logo.png" alt="SMARA Logo" className="w-6 h-6" />
+          <h1 className="text-lg font-bold text-primary">
+            SMARA
+          </h1>
         </div>
       </SidebarHeader>
       
