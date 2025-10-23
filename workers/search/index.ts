@@ -10,6 +10,7 @@ type ReqBody = {
     query: string;
     topK: number;
     user_id: string;
+    minScore?: number; // Optional minimum score threshold
 }
 
 export default{
@@ -36,7 +37,17 @@ export default{
                 returnMetadata: true
             });
 
-            return json({ data: vectorizeRes }, 200);
+            // Filter results by minimum score (default 0.1 for relevance)
+            const minScore = body.minScore ?? 0.4;
+            const filteredResults = vectorizeRes.matches.filter((result: any) => result.score >= minScore);
+
+            console.log(`Filtered ${vectorizeRes.matches.length} results to ${filteredResults.length} with minScore: ${minScore}`);
+
+            return json({ 
+                data: filteredResults,
+                total: filteredResults.length,
+                minScore: minScore
+            }, 200);
         }
         catch (err: any) {
             console.error(err);

@@ -87,6 +87,7 @@ export interface UrlUploadOptions {
 export interface SearchOptions {
   modality?: string;
   limit?: number;
+  minScore?: number; // Minimum relevance score (0.1-1.0)
 }
 
 export interface Folder {
@@ -251,7 +252,8 @@ export class SmaraApiClient {
     const body = {
       query,
       user_id: this.userId,
-      ...options,
+      topK: options?.limit || 10,
+      ...(options?.minScore && { minScore: options.minScore }),
     };
 
     const response = await fetch(`${this.baseUrl}/search`, {
@@ -265,7 +267,9 @@ export class SmaraApiClient {
       throw new Error(error.error || `Search failed: ${response.status}`);
     }
 
-    return await response.json();
+    const result = await response.json();
+    // Handle both old and new response formats
+    return Array.isArray(result) ? result : (result.data || result);
   }
 
   /**

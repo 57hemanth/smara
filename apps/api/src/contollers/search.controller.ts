@@ -2,23 +2,22 @@ import { Context } from "hono";
 import type { Env, Variables } from "../types/env";
 
 interface SearchWorkerResponse {
-  data: {
-    count: number;
-    matches: Array<{
-      id: string;
-      score: number;
-      metadata: {
-        date: string;
-        modality: string;
-        r2_key: string;
-        user_id: string;
-        folder_id?: string;
-        asset_id?: string;
-        chunk_id?: string;
-        url?: string;
-      };
-    }>;
-  };
+  data: Array<{
+    id: string;
+    score: number;
+    metadata: {
+      date: string;
+      modality: string;
+      r2_key: string;
+      user_id: string;
+      folder_id?: string;
+      asset_id?: string;
+      chunk_id?: string;
+      url?: string;
+    };
+  }>;
+  total: number;
+  minScore: number;
 }
 
 interface SearchResult {
@@ -34,7 +33,7 @@ class SearchController {
   static async search(c: Context<{ Bindings: Env; Variables: Variables }>) {
     try {
       const body = await c.req.json();
-      const { query, user_id, modality } = body;
+      const { query, user_id, modality, topK, minScore } = body;
       
       if (!query?.trim()) {
         return c.json({ error: 'Query is required' }, 400);
@@ -51,7 +50,9 @@ class SearchController {
         },
         body: JSON.stringify({
           query,
-          user_id: userId
+          user_id: userId,
+          topK: topK || 10,
+          ...(minScore && { minScore })
         }),
       });
       
@@ -67,7 +68,7 @@ class SearchController {
 
       // Transform results and add R2 URLs
       const results: SearchResult[] = await Promise.all(
-        searchData.data.matches.map(async (match) => {
+        searchData.data.map(async (match) => {
           let preview: string | undefined;
 
           // Generate public URL for R2 object
