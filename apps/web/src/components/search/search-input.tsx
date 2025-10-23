@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Search, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
@@ -18,6 +19,26 @@ export function SearchInput({
   onSearch,
   variant = "centered"
 }: SearchInputProps) {
+  // Animated placeholder texts
+  const placeholderTexts = [
+    "Search your photos...",
+    "Find your videos...",
+    "Search audio files...",
+    "Find documents..."
+  ]
+  
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(0)
+  
+  // Cycle through placeholder texts
+  useEffect(() => {
+    if (variant !== "centered") return // Only animate for centered variant
+    
+    const interval = setInterval(() => {
+      setCurrentPlaceholder(prev => (prev + 1) % placeholderTexts.length)
+    }, 2000) // Change every 2 seconds
+    
+    return () => clearInterval(interval)
+  }, [variant, placeholderTexts.length])
   if (variant === "compact") {
     return (
       <form onSubmit={onSearch} className="w-full">
@@ -54,8 +75,8 @@ export function SearchInput({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search your content... (Press Enter)"
-          className="pl-12 pr-12 h-14 text-lg bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-400"
+          placeholder={placeholderTexts[currentPlaceholder]}
+          className="pl-12 pr-12 h-14 text-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all placeholder:text-slate-400 placeholder:transition-all placeholder:duration-500"
           disabled={loading}
           autoFocus
         />
