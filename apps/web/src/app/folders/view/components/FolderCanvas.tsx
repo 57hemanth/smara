@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { 
   ReactFlow, 
@@ -11,7 +11,6 @@ import {
   useEdgesState,
   addEdge,
   Node,
-  Edge,
   Connection,
   BackgroundVariant
 } from 'reactflow'
@@ -19,15 +18,18 @@ import 'reactflow/dist/style.css'
 
 import { PageLayout } from "@/components/layout"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, ArrowLeft, Folder as FolderIcon, Image, Video, Music, FileText, Link as LinkIcon, AlertCircle } from "lucide-react"
+import { Loader2, ArrowLeft, Folder as FolderIcon, Image, Video, Music, FileText, Link as LinkIcon, Upload, AlertCircle } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
-import { apiClient, type Asset, type Folder } from "@/lib/api"
+import { useFolderData } from "@/hooks/use-folder-data"
+import { useFileUpload } from "@/hooks/use-file-upload"
+import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
+import { apiClient, type Asset } from "@/lib/api"
 import Link from "next/link"
 
-// Asset node types for React Flow
+// Components
 import { AssetNode } from "./AssetNode"
+import { UploadProgress } from "./UploadProgress"
 
 // Custom node types
 const nodeTypes = {
@@ -84,13 +86,8 @@ const generateNodePositions = (assets: Asset[]): Node[] => {
 
 export function FolderCanvas() {
   const searchParams = useSearchParams()
-  const folderId = searchParams.get('id')
+  const folderId = searchParams.get('id') || undefined
   const { userId } = useAuth()
-  
-  const [folder, setFolder] = useState<Folder | null>(null)
-  const [assets, setAssets] = useState<Asset[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
@@ -100,55 +97,38 @@ export function FolderCanvas() {
     apiClient.setUserId(userId)
   }
 
-  // Handle connection creation
+  // Fetch folder data
+  const { folder, assets, loading, error, refreshAssets } = useFolderData({
+    folderId,
+    userId: userId || undefined
+  })
+
+  // File upload handling
+  const { uploadingFiles, uploadFiles, removeUpload } = useFileUpload({
+    userId: userId || undefined,
+    folderName: folder?.name,
+    onUploadComplete: () => {
+      // Refresh assets when uploads complete
+      setTimeout(refreshAssets, 1000)
+    }
+  })
+
+  // Drag and drop handling
+  const { isDragging, dropRef, dragHandlers } = useDragAndDrop({
+    onFilesDropped: uploadFiles
+  })
+
+  // Handle connection creation for ReactFlow
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
   )
 
-  // Fetch folder data and assets
+  // Update nodes when assets change
   useEffect(() => {
-    const fetchFolderData = async () => {
-      // Wait until both userId and folderId are available before attempting fetch
-      if (!userId || !folderId) {
-        setLoading(true)
-        return
-      }
-
-      try {
-        setLoading(true)
-        setError('')
-
-        // Fetch folder info and assets in parallel
-        const [folders, folderAssets] = await Promise.all([
-          apiClient.getFolders(),
-          apiClient.getFolderAssets(folderId)
-        ])
-
-        // Find the current folder
-        const currentFolder = folders.find(f => f.id === folderId)
-        if (!currentFolder) {
-          setError('Folder not found')
-          return
-        }
-
-        setFolder(currentFolder)
-        setAssets(folderAssets)
-
-        // Generate React Flow nodes from assets
-        const flowNodes = generateNodePositions(folderAssets)
-        setNodes(flowNodes)
-        
-      } catch (err: any) {
-        console.error('Error fetching folder data:', err)
-        setError(err.message || 'Failed to load folder')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchFolderData()
-  }, [userId, folderId, setNodes])
+    const flowNodes = generateNodePositions(assets)
+    setNodes(flowNodes)
+  }, [assets, setNodes])
 
   if (loading) {
     return (
@@ -191,7 +171,7 @@ export function FolderCanvas() {
 
   return (
     <PageLayout title={folder?.name ?? 'Folder'} icon={FolderIcon}>
-      <div className="h-[calc(100vh-120px)] w-full">
+      <div className="h-screen w-full flex flex-col">
         {/* Header with folder info and controls */}
         <div className="flex items-center justify-between p-2 border-b bg-white">
           <div className="flex items-center gap-3">
@@ -226,53 +206,78 @@ export function FolderCanvas() {
           </div>
         </div>
 
-        {/* Canvas Area */}
-        {assets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full bg-gray-50">
-            <FolderIcon className="w-16 h-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-600 mb-2">Empty Folder</h3>
-            <p className="text-gray-500 mb-6">This folder doesn't contain any assets yet.</p>
-            <Link href="/upload">
-              <Button>Upload Files</Button>
-            </Link>
-          </div>
-        ) : (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            fitView
-            snapToGrid
-            snapGrid={[20, 20]}
-            className="bg-gray-50"
-          >
-            <Controls />
-            <MiniMap 
-              className="!bg-white !border !border-gray-200"
-              nodeColor={(node) => {
-                const asset = node.data?.asset as Asset
-                if (!asset) return '#94a3b8'
-                
-                switch (asset.status) {
-                  case 'ready': return '#10b981'
-                  case 'processing': return '#f59e0b'
-                  case 'pending': return '#3b82f6'
-                  case 'error': return '#ef4444'
-                  default: return '#94a3b8'
-                }
-              }}
-            />
-            <Background 
-              variant={BackgroundVariant.Dots} 
-              gap={12} 
-              size={1} 
-              color="#e5e7eb"
-            />
-          </ReactFlow>
-        )}
+        {/* Canvas Area with Drag & Drop */}
+        <div 
+          ref={dropRef}
+          className="relative flex-1 bg-gray-50 min-h-0"
+          style={{ height: 'calc(100vh - 180px)' }}
+          {...dragHandlers}
+        >
+          {/* Drag overlay */}
+          {isDragging && (
+            <div className="absolute inset-0 z-50 bg-blue-50/90 border-2 border-dashed border-blue-300 flex items-center justify-center">
+              <div className="text-center">
+                <Upload className="w-12 h-12 text-blue-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-blue-700 mb-2">Drop files to upload</h3>
+                <p className="text-blue-600">Supported: Images, Videos, Audio, Documents</p>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Progress Component */}
+          <UploadProgress uploads={uploadingFiles} onRemove={removeUpload} />
+
+          {/* Main Canvas Content */}
+          {assets.length === 0 && uploadingFiles.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <FolderIcon className="w-16 h-16 text-gray-300 mb-4" />
+              <h3 className="text-lg font-medium text-gray-600 mb-2">Empty Folder</h3>
+              <p className="text-gray-500 mb-6">Drag & drop files here or upload files to get started.</p>
+              <Link href="/upload">
+                <Button>Upload Files</Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="w-full h-full">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                nodeTypes={nodeTypes}
+                fitView
+                snapToGrid
+                snapGrid={[20, 20]}
+                className="bg-gray-50 w-full h-full"
+                style={{ width: '100%', height: '100%' }}
+              >
+                <Controls />
+                <MiniMap 
+                  className="!bg-white !border !border-gray-200"
+                  nodeColor={(node) => {
+                    const asset = node.data?.asset as Asset
+                    if (!asset) return '#94a3b8'
+                    
+                    switch (asset.status) {
+                      case 'ready': return '#10b981'
+                      case 'processing': return '#f59e0b'
+                      case 'pending': return '#3b82f6'
+                      case 'error': return '#ef4444'
+                      default: return '#94a3b8'
+                    }
+                  }}
+                />
+                <Background 
+                  variant={BackgroundVariant.Dots} 
+                  gap={12} 
+                  size={1} 
+                  color="#e5e7eb"
+                />
+              </ReactFlow>
+            </div>
+          )}
+        </div>
       </div>
     </PageLayout>
   )
