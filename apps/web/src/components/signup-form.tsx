@@ -73,10 +73,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   }
 
   return (
-    <Card {...props}>
+    <Card {...props} className="bg-gray-900/50 border-gray-700 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-white">Create an account</CardTitle>
+        <CardDescription className="text-gray-400">
           Enter your information below to create your account
         </CardDescription>
       </CardHeader>
@@ -84,12 +84,12 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         <form onSubmit={handleSubmit}>
           <FieldGroup>
             {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">
+              <div className="rounded-md bg-red-900/20 border border-red-500/30 p-3 text-sm text-red-300">
                 {error}
               </div>
             )}
             <Field>
-              <FieldLabel htmlFor="name">Full Name</FieldLabel>
+              <FieldLabel htmlFor="name" className="text-gray-300">Full Name</FieldLabel>
               <Input
                 id="name"
                 type="text"
@@ -98,10 +98,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 disabled={isLoading}
+                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email" className="text-gray-300">Email</FieldLabel>
               <Input
                 id="email"
                 type="email"
@@ -110,14 +111,15 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isLoading}
+                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
               />
-              <FieldDescription>
+              <FieldDescription className="text-gray-400">
                 We&apos;ll use this to contact you. We will not share your email
                 with anyone else.
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <FieldLabel htmlFor="password" className="text-gray-300">Password</FieldLabel>
               <Input
                 id="password"
                 type="password"
@@ -125,13 +127,14 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
+                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
               />
-              <FieldDescription>
+              <FieldDescription className="text-gray-400">
                 Must be at least 8 characters long.
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="confirm-password">
+              <FieldLabel htmlFor="confirm-password" className="text-gray-300">
                 Confirm Password
               </FieldLabel>
               <Input
@@ -141,16 +144,17 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 disabled={isLoading}
+                className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
               />
-              <FieldDescription>Please confirm your password.</FieldDescription>
+              <FieldDescription className="text-gray-400">Please confirm your password.</FieldDescription>
             </Field>
             <FieldGroup>
               <Field>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="w-full bg-white text-black hover:bg-gray-100 transition-all duration-200">
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </Button>
-                <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login" className="text-primary hover:underline">Sign in</a>
+                <FieldDescription className="px-6 text-center text-gray-400">
+                  Already have an account? <a href="/login" className="text-white hover:underline transition-colors">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -63,10 +63,10 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="bg-gray-900/50 border-gray-700 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Login to your account</CardTitle>
+          <CardDescription className="text-gray-400">
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
@@ -74,12 +74,12 @@ export function LoginForm({
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               {error && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">
+                <div className="rounded-md bg-red-900/20 border border-red-500/30 p-3 text-sm text-red-300">
                   {error}
                 </div>
               )}
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-gray-300">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -88,14 +88,15 @@ export function LoginForm({
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   disabled={isLoading}
+                  className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
                 />
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <FieldLabel htmlFor="password" className="text-gray-300">Password</FieldLabel>
                   <a
                     href="#"
-                    className="ml-auto inline-block text-sm text-gray-600 underline-offset-4 hover:underline"
+                    className="ml-auto inline-block text-sm text-gray-400 underline-offset-4 hover:underline hover:text-white transition-colors"
                   >
                     Forgot your password?
                   </a>
@@ -107,14 +108,15 @@ export function LoginForm({
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   disabled={isLoading}
+                  className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-white/50 focus:ring-white/20"
                 />
               </Field>
               <Field>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="w-full bg-white text-black hover:bg-gray-100 transition-all duration-200">
                   {isLoading ? "Logging in..." : "Login"}
                 </Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup" className="text-primary hover:underline">Sign up</a>
+                <FieldDescription className="text-center text-gray-400">
+                  Don&apos;t have an account? <a href="/signup" className="text-white hover:underline transition-colors">Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
