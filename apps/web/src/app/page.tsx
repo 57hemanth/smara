@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +33,15 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMobileMenuOpen]);
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-x-hidden">
@@ -74,15 +84,96 @@ export default function Home() {
 
               {/* Mobile menu button */}
               <div className="md:hidden">
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 transition-colors">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8 hover:bg-white/10 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    {isMobileMenuOpen ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    )}
                   </svg>
                 </Button>
               </div>
             </div>
           </div>
         </header>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Menu Drawer */}
+        <div className={`fixed top-0 right-0 h-full w-[280px] bg-black/95 backdrop-blur-xl border-l border-white/10 z-50 md:hidden transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}>
+          <div className="flex flex-col h-full p-6">
+            <div className="flex items-center justify-between mb-8">
+              {/* <div className="flex items-center space-x-2">
+                <img src="/dark-logo.png" alt="SMARA Logo" className="w-6 h-6" />
+                <span className="text-lg font-semibold">SMARA</span>
+              </div> */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 hover:bg-white/10"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </Button>
+            </div>
+
+            <nav className="flex flex-col space-y-6 flex-1">
+              <Link 
+                href="#features" 
+                className="text-gray-300 hover:text-white transition-colors text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+              <Link 
+                href="#pricing" 
+                className="text-gray-300 hover:text-white transition-colors text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link 
+                href="/login" 
+                className="text-gray-300 hover:text-white transition-colors text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+              
+              <div className="pt-4 border-t border-white/10">
+                <Button 
+                  size="lg" 
+                  className="w-full bg-white text-black hover:bg-gray-100 rounded-full"
+                  asChild
+                >
+                  <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                    Get Started
+                  </Link>
+                </Button>
+              </div>
+            </nav>
+
+            <div className="text-xs text-gray-500 text-center mt-auto">
+              © 2025 SMARA. All rights reserved.
+            </div>
+          </div>
+        </div>
 
         {/* Hero Section */}
         <section className="pt-20 pb-32 sm:pt-24 sm:pb-40 mt-16">
