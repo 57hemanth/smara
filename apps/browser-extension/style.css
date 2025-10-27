@@ -1,184 +1,98 @@
-/* Basic styling for Plasmo extension */
-:root {
-  /* Blue Palette Variables */
-  --primary: #112D4E;   /* deep navy */
-  --accent: #3F72AF;    /* medium blue */
-  --secondary: #DBE2EF; /* light blue */
-  --background: #F9F7F7;/* soft near-white */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
 }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
+/* Extension-specific styles */
+.extension-popup {
+  width: 380px;
+  min-height: 500px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: white;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0.375rem;
+  overflow: hidden;
 }
 
-/* Utility classes similar to Tailwind */
-.w-80 { width: 320px; }
-.p-4 { padding: 1rem; }
-.space-y-4 > * + * { margin-top: 1rem; }
-.space-y-3 > * + * { margin-top: 0.75rem; }
-.space-y-2 > * + * { margin-top: 0.5rem; }
-.space-y-1 > * + * { margin-top: 0.25rem; }
-
-/* Theme-based background utilities */
-.bg-white { background-color: var(--background); }
-.bg-gray-50 { background-color: var(--background); }
-.bg-gray-100 { background-color: var(--secondary); }
-.bg-blue-50 { background-color: var(--secondary); }
-.bg-blue-100 { background-color: var(--accent); }
-.bg-blue-600 { background-color: var(--primary); }
-.bg-blue-700 { background-color: var(--primary); }
-.bg-green-50 { background-color: var(--secondary); }
-.bg-red-50 { background-color: var(--background); }
-
-.text-gray-500 { color: var(--primary); }
-.text-gray-600 { color: var(--primary); }
-.text-gray-700 { color: var(--primary); }
-.text-gray-900 { color: var(--primary); }
-.text-blue-600 { color: var(--primary); }
-.text-blue-700 { color: var(--primary); }
-.text-blue-800 { color: var(--primary); }
-.text-green-700 { color: var(--primary); }
-.text-red-700 { color: #b91c1c; }
-.text-white { color: var(--background); }
-
-.text-xs { font-size: 0.75rem; }
-.text-sm { font-size: 0.875rem; }
-.text-lg { font-size: 1.125rem; }
-
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-
-.text-center { text-align: center; }
-
-.block { display: block; }
-.inline-block { display: inline-block; }
-.flex { display: flex; }
-.inline-flex { display: inline-flex; }
-
-.flex-1 { flex: 1; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-
-.w-full { width: 100%; }
-.max-h-16 { max-height: 4rem; }
-.max-h-32 { max-height: 8rem; }
-.max-h-64 { max-height: 16rem; }
-.min-h-32 { min-height: 8rem; }
-
-.max-w-full { max-width: 100%; }
-.max-w-md { max-width: 28rem; }
-
-.overflow-y-auto { overflow-y: auto; }
-
-.px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
-.px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
-.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-.py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
-.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-.py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
-.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-.p-1 { padding: 0.25rem; }
-.p-1\.5 { padding: 0.375rem; }
-.p-2 { padding: 0.5rem; }
-.pt-2 { padding-top: 0.5rem; }
-
-.border { border: 1px solid var(--secondary); }
-.border-gray-200 { border-color: var(--secondary); }
-.border-red-200 { border-color: var(--background); }
-.border-green-200 { border-color: var(--secondary); }
-.border-blue-200 { border-color: var(--accent); }
-.border-t { border-top: 1px solid var(--secondary); }
-
-.rounded { border-radius: 0.25rem; }
-.rounded-md { border-radius: 0.375rem; }
-.rounded-lg { border-radius: 0.5rem; }
-
-.shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-
-.transition-colors { 
-  transition-property: color, background-color, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+/* Custom scrollbar */
+.extension-popup ::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Input styles */
-input {
-  border: 1px solid var(--secondary);
-  border-radius: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
-  width: 100%;
-  outline: none;
-  background-color: var(--background);
-  color: var(--primary);
+.extension-popup ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
 }
 
-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 1px var(--primary);
+.extension-popup ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Button styles */
-button {
-  border: none;
-  border-radius: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  transition: background-color 150ms;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-/* File input styles */
-input[type="file"] {
-  padding: 0.25rem;
-  font-size: 0.75rem;
-}
-
-input[type="file"]::file-selector-button {
-  margin-right: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  border: none;
-  background-color: var(--secondary);
-  color: var(--primary);
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-input[type="file"]::file-selector-button:hover {
-  background-color: var(--accent);
-}
-
-/* Link styles */
-a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
+.extension-popup ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
