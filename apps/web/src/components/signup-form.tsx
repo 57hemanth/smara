@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,11 +18,13 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { createApiClient } from "@smara/api-client"
+import { isExtensionAuth, sendAuthToExtension, waitForExtension } from "@/lib/extension-auth"
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isExtension, setIsExtension] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -33,6 +35,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const apiClient = createApiClient({
     baseUrl: process.env.NEXT_PUBLIC_API_URL || "https://smara-api.hemanthyanamaddi.workers.dev",
   })
+
+  // Check if opened from extension
+  useEffect(() => {
+    setIsExtension(isExtensionAuth())
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,7 +70,38 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       localStorage.setItem("smara_user_id", response.user.id)
       localStorage.setItem("smara_user", JSON.stringify(response.user))
 
-      // Redirect to search page
+      // If opened from extension, send auth data to extension
+      if (isExtension) {
+        console.log('Extension auth flow detected')
+        setError("Checking for extension...")
+        
+        // Wait for extension to be ready
+        const extensionReady = await waitForExtension()
+        
+        if (extensionReady) {
+          setError("Sending credentials to extension...")
+          const sent = await sendAuthToExtension({
+            token: response.token,
+            user: response.user
+          })
+
+          if (sent) {
+            setError("✓ Authentication successful! This tab will close automatically.")
+            // Tab will close automatically via content script
+            return
+          } else {
+            setError("⚠ Failed to send credentials to extension. Please try reopening from the extension.")
+            setIsLoading(false)
+            return
+          }
+        } else {
+          console.warn('Extension not detected, falling back to web flow')
+          setError("Extension not detected. Continuing with web signup...")
+          // Continue to redirect to search page
+        }
+      }
+
+      // Redirect to search page (normal web flow)
       router.push("/search")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create account")
