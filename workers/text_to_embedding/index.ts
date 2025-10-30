@@ -49,6 +49,8 @@ export default {
 
                 console.log(`Processing embedding for asset: ${body.asset_id}, modality: ${body.modality}, folder_id: ${body.folder_id}`);
 
+                console.log("Here is the text: ", body.text);
+
                 const aiRes = await env.AI.run(
                     MODEL,
                     {

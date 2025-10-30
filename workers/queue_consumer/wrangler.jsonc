@@ -35,6 +35,10 @@
         "queue": "smara-link-ingest"
       },
       {
+        "binding": "DOC_INGEST_QUEUE",
+        "queue": "smara-doc-ingest"
+      },
+      {
         "binding": "EMBEDDING_QUEUE",
         "queue": "smara-embedding-queue"
       }

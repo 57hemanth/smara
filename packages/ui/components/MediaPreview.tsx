@@ -166,6 +166,59 @@ export function MediaPreview({
     }
   }
 
+  // For document files (PDF, etc.), show document icon and link
+  if (modality === "document") {
+    return (
+      <div className={className}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 16px',
+          borderRadius: '4px',
+          border: '1px solid #e5e7eb',
+          backgroundColor: '#f9fafb'
+        }}>
+          <svg 
+            width="24" 
+            height="24" 
+            fill="none" 
+            stroke="#ef4444" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" 
+            />
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M9 13h6M9 17h6" 
+            />
+          </svg>
+          <a 
+            href={url} 
+            target="_blank" 
+            rel="noreferrer"
+            style={{
+              color: '#2563eb',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+            onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+          >
+            View PDF Document ↗
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   // For text or other modalities, show as link with icon
   return (
     <div className={className}>

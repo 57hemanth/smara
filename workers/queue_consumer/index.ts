@@ -1,7 +1,7 @@
 import type { Env, IngestMessage } from './types'
 import { json } from '../shared/utils'
 import { MessageBatch } from '@cloudflare/workers-types'
-import { processImageMessage, processAudioMessage, processTextMessage, processVideoMessage, processLinkMessage } from './processors'
+import { processImageMessage, processAudioMessage, processTextMessage, processVideoMessage, processLinkMessage, processDocumentMessage } from './processors'
 
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -42,6 +42,9 @@ const worker = {
             break
           case 'link':
             await processLinkMessage(ingestMsg, env)
+            break
+          case 'document':
+            await processDocumentMessage(ingestMsg, env)
             break
           default:
             throw new Error(`Unknown modality: ${ingestMsg.modality}`)

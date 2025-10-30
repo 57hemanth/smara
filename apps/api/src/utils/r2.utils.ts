@@ -3,12 +3,13 @@ export function sanitizePathSegment(s?: string) {
     return s.replace(/[^a-zA-Z0-9/_-]/g, '').replace(/\/+/g, '/').replace(/^\/|\/$/g, '');
 }
 
-// Get modality from MIME type (image, audio, video, text)
+// Get modality from MIME type (image, audio, video, text, document)
 export function modalityFromType(t: string): string {
     if (t.startsWith('image/')) return 'image';
     if (t.startsWith('video/')) return 'video';
     if (t.startsWith('audio/')) return 'audio';
-    if (t === 'application/pdf' || t === 'text/plain') return 'text';
+    if (t === 'application/pdf') return 'document';
+    if (t === 'text/plain') return 'text';
     return 'unknown';
 }
 

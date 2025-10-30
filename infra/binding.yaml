@@ -58,6 +58,12 @@ queues:
       - worker: smara-link-to-text
         role: Extract YouTube transcripts and convert to embeddings
   
+  - name: smara-doc-ingest
+    description: Document processing queue (PDF, DOCX, etc.)
+    consumers:
+      - worker: smara-doc-to-text
+        role: Extract text from documents (currently PDF only)
+  
   # Final embedding generation queue
   - name: smara-embedding-queue
     description: Text to vector embedding queue
@@ -77,12 +83,12 @@ queues:
 #                          └────────────────────────────────┼────────────────────────────────┘
 #                                                           ↓
 #                          ┌────────────────────────────────┼────────────────────────────────┐
-#                          ↓                                                                 ↓
-#                  smara-link-ingest                                             (frames/audio from video)
-#                          ↓                                                                 ↓
-#                    link_to_text                                                            │
-#                          ↓                                                                 │
-#                          └─────────────────────────────────────────────────────────────────┘
+#                          ↓                                ↓                                ↓
+#                  smara-link-ingest                  smara-doc-ingest            (frames/audio from video)
+#                          ↓                                ↓                                ↓
+#                    link_to_text                      doc_to_text                           │
+#                          ↓                                ↓                                │
+#                          └────────────────────────────────┼────────────────────────────────┘
 #                                                           ↓
 #                                              smara-embedding-queue
 #                                                           ↓

@@ -172,7 +172,7 @@ class UploadController {
         ? `${c.env.R2_PUBLIC_BASE_URL}/${key}` 
         : null;
 
-      const modality = modalityFromType(contentType) as 'image' | 'audio' | 'video' | 'text' | 'link';
+      const modality = modalityFromType(contentType) as 'image' | 'audio' | 'video' | 'text' | 'link' | 'document';
 
       // Create asset record in D1
       await assetRepo.create({

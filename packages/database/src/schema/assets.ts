@@ -14,7 +14,7 @@ export const assets = sqliteTable('assets', {
   r2_key: text('r2_key').notNull(),
   mime: text('mime').notNull(),
   modality: text('modality', { 
-    enum: ['image', 'audio', 'video', 'text', 'link'] 
+    enum: ['image', 'audio', 'video', 'text', 'link', 'document'] 
   }).notNull(),
   bytes: integer('bytes').notNull(),
   sha256: text('sha256').notNull(),

@@ -1,0 +1,36 @@
+{
+    "name": "smara-doc-to-text",
+    "main": "index.ts",
+    "compatibility_date": "2025-10-01",
+    "compatibility_flags": [
+        "nodejs_compat"
+    ],
+    "r2_buckets": [
+        {
+            "binding": "R2",
+            "bucket_name": "smara",
+            "remote": true
+        }
+    ],
+    "vars": {
+        "R2_PUBLIC_URL": "https://pub-3b4dc4f1a59d488284a17b5673f8d69e.r2.dev"
+    },
+    "queues": {
+        "consumers": [{
+            "queue": "smara-doc-ingest",
+            "max_batch_size": 1,
+            "max_batch_timeout": 0
+        }],
+        "producers": [{
+            "binding": "EMBEDDING_QUEUE",
+            "queue": "smara-embedding-queue"
+        }]
+    },
+    "observability": {
+        "logs": {
+            "enabled": true,
+            "head_sampling_rate": 1,
+            "invocation_logs": true
+        }
+    }
+}

@@ -6,7 +6,7 @@ export interface IngestMessage {
   folder_id: string
   r2_key: string
   mime: string
-  modality: 'image' | 'audio' | 'video' | 'text' | 'link'
+  modality: 'image' | 'audio' | 'video' | 'text' | 'link' | 'document'
   bytes?: number
   url?: string  // For link modality - the YouTube or external URL
 }
@@ -20,5 +20,6 @@ export interface Env {
   AUDIO_INGEST_QUEUE: Queue
   VIDEO_INGEST_QUEUE: Queue
   LINK_INGEST_QUEUE: Queue
+  DOC_INGEST_QUEUE: Queue
   EMBEDDING_QUEUE: Queue
 }

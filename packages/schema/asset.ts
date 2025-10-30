@@ -7,7 +7,7 @@ export const assetSchema = z.object({
     url: z.string(),
     r2_key: z.string(),
     mime: z.string(),
-    modality: z.enum(['image', 'audio', 'video', 'text', 'link']),
+    modality: z.enum(['image', 'audio', 'video', 'text', 'link', 'document']),
     created_at: z.string(),
     updated_at: z.string(),
 });

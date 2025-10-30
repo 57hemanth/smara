@@ -29,7 +29,7 @@ export function FileUploadForm({
           className="h-11 cursor-pointer file:cursor-pointer"
         />
         <p className="text-xs text-gray-500">
-          Supported: Images, Videos, Audio files
+          Supported: Images, Videos, Audio, Documents (PDF, DOC, DOCX)
         </p>
       </div>
 
