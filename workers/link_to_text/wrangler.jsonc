@@ -1,0 +1,52 @@
+{
+    "name": "smara-link-to-text",
+    "main": "worker.ts",
+    "compatibility_date": "2025-10-17",
+  
+    // Bind the container via a Durable Object
+    // Note: CPU/memory allocation is managed by Cloudflare automatically
+    "containers": [
+      { 
+        "class_name": "TranscriptContainer", 
+        "image": "./Dockerfile", 
+        "max_instances": 100
+      }
+    ],
+    "durable_objects": {
+      "bindings": [{ "name": "TRANSCRIPT_CONTAINER", "class_name": "TranscriptContainer" }]
+    },
+    "migrations": [
+      { "tag": "v1", "new_sqlite_classes": ["TranscriptContainer"] }
+    ],
+  
+    // R2 for storing metadata (if needed)
+    "r2_buckets": [
+      {
+        "binding": "R2",
+        "bucket_name": "smara",
+        "remote": true
+      }
+    ],
+  
+    // Queue consumer/producer bindings
+    "queues": {
+      "consumers": [{
+        "queue": "smara-link-ingest",
+        "max_batch_size": 1,
+        "max_batch_timeout": 0
+      }],
+      "producers": [{
+        "binding": "EMBEDDING_QUEUE",
+        "queue": "smara-embedding-queue"
+      }]
+    },
+
+    "observability": {
+        "logs": {
+            "enabled": true,
+            "head_sampling_rate": 1,
+            "invocation_logs": true
+        }
+    }
+}
+
