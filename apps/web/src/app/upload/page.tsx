@@ -26,8 +26,10 @@ export default function UploadPage() {
   const [status, setStatus] = useState<string>("");
   const [uploadedKey, setUploadedKey] = useState<string | null>(null);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
-  const [folderName, setFolderName] = useState<string>("My Folder");
+  const [folderName, setFolderName] = useState<string>("");
+  
   const [uploading, setUploading] = useState(false);
+
 
   function validateUrl(url: string): boolean {
     setUrlError("");
@@ -122,7 +124,7 @@ export default function UploadPage() {
         <div className="max-w-2xl mx-auto w-full space-y-6">
           {/* Folder Selector */}
           <FolderSelector value={folderName} onChange={setFolderName} />
-
+          
           {/* Mode Selector */}
           <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
             <button
