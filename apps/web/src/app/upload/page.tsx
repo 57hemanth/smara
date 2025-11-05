@@ -58,7 +58,7 @@ export default function UploadPage() {
       if (!file || !userId) return;
 
       setUploading(true);
-      setStatus("Uploading to R2…");
+      setStatus("Uploading...");
 
       const prefix = file.type.startsWith("image/")
         ? "images"
@@ -174,12 +174,12 @@ export default function UploadPage() {
           {status && <StatusMessage message={status} />}
 
           {/* Upload Result */}
-          {uploadedKey && (
+          {/* {uploadedKey && (
             <UploadResult 
               uploadedKey={uploadedKey} 
               publicUrl={publicUrl} 
             />
-          )}
+          )} */}
         </div>
       </div>
     </PageLayout>
