@@ -51,10 +51,10 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Preview */}
-      {result.preview && (
+      {(result.preview || (result.modality === 'link' && result.metadata?.url)) && (
         <div className="aspect-video bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden mb-3">
           <MediaPreview 
-            url={result.preview} 
+            url={result.modality === 'link' && result.metadata?.url ? result.metadata.url : result.preview!} 
             modality={result.modality}
             maxHeight="120px"
             className="w-full h-full object-cover"
@@ -80,7 +80,8 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
           </div>
         )}
         
-        {result.preview && (
+        {/* Show download button only for non-link results that have preview URLs */}
+        {result.preview && result.modality !== 'link' && (
           <Button
             size="sm"
             variant="outline"
