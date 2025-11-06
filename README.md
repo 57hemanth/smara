@@ -46,3 +46,5 @@ SMARA is built on a **serverless, cloud-native stack** powered by Cloudflare Wor
 - **Real-Time Search**: Direct API for instant semantic search results
 - **Multi-Source Capture**: Web UI and Chrome extension feed the same unified pipeline
 - **Secure & Private**: User-isolated data, signed URLs, JWT authentication
+
+For detailed technical documentation, see [architecture.md](docs/architecture.md).
