@@ -44,11 +44,11 @@ const data = {
       url: "/upload",
       icon: Upload,
     },
-    {
-      title: "Recent",
-      url: "/recent",
-      icon: Clock,
-    },
+    // {
+    //   title: "Recent",
+    //   url: "/recent",
+    //   icon: Clock,
+    // },
   ],
   navSecondary: [
     {
